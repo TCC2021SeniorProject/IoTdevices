@@ -1,2 +1,2 @@
 # IoTdevices
-Device development repo(Hardware).
+Device development repo
