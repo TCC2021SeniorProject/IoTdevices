@@ -1,17 +1,12 @@
 from pprint import pformat
-#import json
 import socket
-#import serial
+import serial
 import ssl
 import sys
 import time
 from ast import literal_eval
 
 def send(addr, data):
-    # Send MQTT magic packet to addr
-    # This is 0xf0 (mqtt reserved) 0x05(data length) 0x91???????? (data)
-    # Should tell Roomba to move forward at full speed.
-    # Uses 10 second timeout for socket connection
     packet = bytes.fromhex(data)
     #packet = serial.to_bytes(data)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,8 +20,9 @@ def send(addr, data):
     no_error = True
     try:
         wrappedSocket.connect((addr, 8883))
-#        print('Connection successful.')
-        wrappedSocket.send(packet)
+        ser = serial.Serial(8883, 115200)
+        ser.write(packet)
+        #wrappedSocket.send(packet)
         print(f'\'{data}\' sent to {addr} as {packet}')
         wrappedSocket.close()
         return no_error
@@ -111,7 +107,22 @@ def main():
     data_pwm_rotate_ccw = '9200ffff01'
     data_pwm_backward_full = '92ff01ff01'
     data_pwm_backward_half = '9288018801'
-    
+
+    blid = ''
+    password = ''
+
+    options = {
+        port: 8883,
+        clientId: blid,
+        rejectUnauthorized: false,
+        protocolId: 'MQTT',
+        protocolVersion: 4,
+        ciphers: 'AES128-SHA256',
+        clean: false,
+        username: blid,
+        password: password
+    };
+
     if arg.oneroomba == '0':
         roomba = '192.168.1.33'
     elif arg.oneroomba == '1':
