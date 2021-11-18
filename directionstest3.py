@@ -108,8 +108,10 @@ def main():
     data_pwm_backward_full = '92ff01ff01'
     data_pwm_backward_half = '9288018801'
 
-    blid = ''
-    password = ''
+    blid0 = '80B5041C82411770'
+    password0 = ':1:1634765192:FVxxVurVEQPCOmy9'
+    blid1 = '80B5072460425890'
+    password1 = ':1:1635802266:wFGtE5itVgxeqgc5'
 
     options = {
         port: 8883,
