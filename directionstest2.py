@@ -20,9 +20,9 @@ def send(addr, data):
     no_error = True
     try:
         wrappedSocket.connect((addr, 8883))
-        ser = serial.Serial(8883, 115200)
-        ser.write(packet)
-        #wrappedSocket.send(packet)
+        #ser = serial.Serial(8883, 115200)
+        #ser.write(packet)
+        wrappedSocket.send(packet)
         print(f'\'{data}\' sent to {addr} as {packet}')
         wrappedSocket.close()
         return no_error
@@ -117,44 +117,44 @@ def main():
     else:
         print('Invalid Roomba selection.')
         
-    data += data_start
+#    data = data_start
     
     if arg.safemode == 'full':
         print('Warning: Setting Roomba(s) to full control mode... Sensors are disabled in this mode.')
-        data += data_full
+        data = data_full
     elif arg.safemode == 'safe':
         print('Setting Roomba(s) to safe mode.')
-        data += data_safe
+        data = data_safe
     else:
         print('Error: Mode not recognized.')
         exit()
     
     if arg.drive == 'clean':
         print('Clean selected.')
-        data += data_clean
+        data = data_clean
     elif arg.drive == 'dock':
         print('Dock selected.')
-        data += data_dock
+        data = data_dock
     elif arg.drive == 'drive':
         print('Drive selected.')
         if arg.direction == 'forward':
             print('Forward selected.')
-            data += data_forward_full
+            data = data_forward_full
         elif arg.direction == 'forwardhalf':
             print('Half speed forward selected.')
-            data += data_forward_half
+            data = data_forward_half
         elif arg.direction == 'rotatecw':
             print('Rotate Clockwise selected.')
-            data += data_rotate_cw
+            data = data_rotate_cw
         elif arg.direction == 'rotateccw':
             print('Rotate Counterclockwise selected.')
-            data += data_rotate_ccw
+            data = data_rotate_ccw
         elif arg.direction == 'backward':
             print('Backward selected.')
-            data += data_backward_full
+            data = data_backward_full
         elif arg.direction == 'backwardhalf':
             print('Half speed backward selected.')
-            data += data_backward_half
+            data = data_backward_half
         else:
             print('Invalid Roomba direction.')
             return
@@ -162,22 +162,22 @@ def main():
         print('Drive Direct selected.')
         if arg.direction == 'forward':
             print('Forward selected.')
-            data += data_dd_forward_full
+            data = data_dd_forward_full
         elif arg.direction == 'forwardhalf':
             print('Half speed forward selected.')
-            data += data_dd_forward_half
+            data = data_dd_forward_half
         elif arg.direction == 'rotatecw':
             print('Rotate Clockwise selected.')
-            data += data_dd_rotate_cw
+            data = data_dd_rotate_cw
         elif arg.direction == 'rotateccw':
             print('Rotate Counterclockwise selected.')
-            data += data_dd_rotate_ccw
+            data = data_dd_rotate_ccw
         elif arg.direction == 'backward':
             print('Backward selected.')
-            data += data_dd_backward_full
+            data = data_dd_backward_full
         elif arg.direction == 'backwardhalf':
             print('Half speed backward selected.')
-            data += data_dd_backward_half
+            data = data_dd_backward_half
         else:
             print('Invalid Roomba direction.')
             return
@@ -185,42 +185,51 @@ def main():
         print('Drive PWM selected.')
         if arg.direction == 'forward':
             print('Forward selected.')
-            data += data_pwm_forward_full
+            data = data_pwm_forward_full
         elif arg.direction == 'forwardhalf':
             print('Half speed forward selected.')
-            data += data_pwm_forward_half
+            data = data_pwm_forward_half
         elif arg.direction == 'rotatecw':
             print('Rotate Clockwise selected.')
-            data += data_pwm_rotate_cw
+            data = data_pwm_rotate_cw
         elif arg.direction == 'rotateccw':
             print('Rotate Counterclockwise selected.')
-            data += data_pwm_rotate_ccw
+            data = data_pwm_rotate_ccw
         elif arg.direction == 'backward':
             print('Backward selected.')
-            data += data_pwm_backward_full
+            data = data_pwm_backward_full
         elif arg.direction == 'backwardhalf':
             print('Half speed backward selected.')
-            data += data_pwm_backward_half
+            data = data_pwm_backward_half
         else:
             print('Invalid Roomba direction.')
             return
     
-    data += data_stop
+#    data += data_stop
     
-    data_size = str(int(len(data[2:])/2))
-    if len(data_size) == 1:
-        data_size = '0' + data_size
-    data = data[:2] + data_size + data[2:]
-    
-    if roomba != 'both':
-        if not send(roomba, data):
-            print('Failed to connect to Roomba at {}'.format(roomba))
-            exit()
+#    data_size = str(int(len(data[2:])/2))
+#    if len(data_size) == 1:
+#        data_size = '0' + data_size
+#    data = data[:2] + data_size + data[2:]
+
+    ser = serial.Serial(8883, 115200)
+    ser.write(data_start)
+    if arg.safemode == 'full':
+        ser.write(data_full)
     else:
-        if not send('192.168.1.33', data):
-            print('Failed to connect to Roomba0.')
-        if not send('192.168.1.38', data):
-            print('Failed to connect to Roomba1.')
+        ser.write(data_safe)
+    ser.write(data)
+    ser.write(data_stop)
+
+#    if roomba != 'both':
+#        if not send(roomba, data):
+#            print('Failed to connect to Roomba at {}'.format(roomba))
+#            exit()
+#    else:
+#        if not send('192.168.1.33', data):
+#            print('Failed to connect to Roomba0.')
+#        if not send('192.168.1.38', data):
+#            print('Failed to connect to Roomba1.')
 
 
 if __name__ == '__main__':
