@@ -1,0 +1,35 @@
+2021-11-01 17:37:24 INFO [Roomba.Password] Robot at IP: 192.168.1.33 Data: {
+  "ver": "3",
+  "hostname": "Roomba-80B5041C82411770",
+  "robotname": "Roomba0",
+  "ip": "192.168.1.33",
+  "mac": "00:E9:3A:26:E0:28",
+  "sw": "3.4.62",
+  "sku": "e515020",
+  "nc": 0,
+  "proto": "mqtt",
+  "cap": {
+    "ota": 1,
+    "eco": 1,
+    "svcConf": 1
+  }
+}
+password: ":1:1634765192:FVxxVurVEQPCOmy9"
+
+2021-11-01 17:37:24 INFO [Roomba.Password] Robot at IP: 192.168.1.38 Data: {
+  "ver": "3",
+  "hostname": "Roomba-80B5072460425890",
+  "robotname": "Roomba1",
+  "ip": "192.168.1.38",
+  "mac": "00:E9:3A:39:EA:CF",
+  "sw": "3.4.62",
+  "sku": "e515020",
+  "nc": 0,
+  "proto": "mqtt",
+  "cap": {
+    "ota": 1,
+    "eco": 1,
+    "svcConf": 1
+  }
+}
+password: ":1:1635802266:wFGtE5itVgxeqgc5"
