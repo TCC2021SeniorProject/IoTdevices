@@ -25,9 +25,9 @@ def send(addr, data):
     no_error = True
     try:
         wrappedSocket.connect((addr, 8883))
-        print('Connection successful.')
+#        print('Connection successful.')
         wrappedSocket.send(packet)
-        print('Command sent.')
+        print(f'\'{data}\' sent to {addr} as {packet}')
         wrappedSocket.close()
         return no_error
     except socket.timeout as e:
@@ -61,7 +61,7 @@ def main():
         default='2',
         help='Choose a Roomba. \'0\' (Roomba0), \'1\' (Roomba1), or \'2\' (Both).')
     parser.add_argument(
-        '-d','--direction',
+        '-m','--direction',
         action='store',
         type=str,
         default='backward',
@@ -73,45 +73,44 @@ def main():
         default='safe',
         help='Choose safe mode or full mode. Default is safe. \'safe\' or \'full\'.')
     parser.add_argument(
-        '-m','--drive',
+        '-d','--drive',
         action='store',
         type=str,
-        default='drive',
-        help='Choose a drive mode. \'drive\', \'dd\', or \'pwm\'.')
+        default='clean',
+        help='Choose a drive mode. \'drive\', \'dd\', \'pwm\', \'clean\', or \'dock\'.')
     arg = parser.parse_args()
 
     #-------- Movement Data ----------------
-    data_start = 'f00180'                   # Data to start OI
-    #data_start = [0xf0, 0x01, 0x80]
-    data_safe = 'f00183'                    # Data for safe mode
-    #data_safe = [0xf0, 0x01, 0x83]
-    data_full = 'f00184'                    # Data for full mode
+    # Basics
+    data = 'f0'
+    data_start = '80'                   # Data to start OI
+    data_safe = '83'                    # Data for safe mode
+    data_full = '84'                    # Data for full mode
+    data_clean = '87'                   # Data for clean
+    data_dock = '8f'                    # Data for dock
+    data_halt = '9100000000'            # Data to stop Roomba movement
+    data_stop = 'ad'                    # Data to stop OI
     # Drive
-    data_forward_full = 'f003898000'        # Data for full speed forward motion
-    data_forward_half = 'f003894000'        # Data for half speed forward motion
-    data_rotate_cw = 'f00389ffff'           # Data to spin clockwise
-    data_rotate_ccw = 'f003890001'          # Data to spin counter-clockwise
-    data_backward_full = 'f003897fff'       # Data for full speed backward motion
-    data_backward_half = 'f00389bfff'      # Data for half speed backward motion
+    data_forward_full = '898000'        # Data for full speed forward motion
+    data_forward_half = '8900fa0000'    # Data for half speed forward motion
+    data_rotate_cw = '89ffff'           # Data to spin clockwise
+    data_rotate_ccw = '890001'          # Data to spin counter-clockwise
+    data_backward_full = '897fff'       # Data for full speed backward motion
+    data_backward_half = '89ff060000'   # Data for half speed backward motion
     # Drive Direct
-    data_dd_forward_full = 'f0059101f401f4'
-    data_dd_forward_half = 'f0059100ff00ff'
-    data_dd_rotate_cw = 'f00591fe0c01f4'
-    #data_dd_rotate_cw = [0xf0, 0x05, 0x91, 0xfe, 0x0c, 0x01, 0xf4]
-    data_dd_rotate_ccw = 'f0059101f4fe0c'
-    data_dd_backward_full = 'f00591fe0cfe0c'
-    data_dd_backward_half = 'f00591ff01ff01'
+    data_dd_forward_full = '9101f401f4'
+    data_dd_forward_half = '9100ff00ff'
+    data_dd_rotate_cw = '91fe0c01f4'
+    data_dd_rotate_ccw = '9101f4fe0c'
+    data_dd_backward_full = '91fe0cfe0c'
+    data_dd_backward_half = '91ff01ff01'
     # Drive PWM
-    data_pwm_forward_full = 'f0059200ff00ff'
-    #data_pwm_forward_half = ''
-    data_pwm_rotate_cw = 'f00592ff0100ff'
-    data_pwm_rotate_ccw = 'f0059200ffff01'
-    data_pwm_backward_full = 'f00592ff01ff01'
-    #data_pwm_backward_half = ''
-    data_halt = 'f0059100000000'                # Data to stop Roomba movement
-    #data_halt = [0xf0, 0x05, 0x89, 0x00, 0x00, 0x00, 0x00]
-    data_stop = 'f001ad'                    # Data to stop OI
-    #data_stop = [0xf0, 0x01, 0xad]
+    data_pwm_forward_full = '9200ff00ff'
+    data_pwm_forward_half = '9200880088'
+    data_pwm_rotate_cw = '92ff0100ff'
+    data_pwm_rotate_ccw = '9200ffff01'
+    data_pwm_backward_full = '92ff01ff01'
+    data_pwm_backward_half = '9288018801'
     
     if arg.oneroomba == '0':
         roomba = '192.168.1.33'
@@ -121,27 +120,45 @@ def main():
         roomba = 'both'
     else:
         print('Invalid Roomba selection.')
-
-    if arg.drive == 'drive':
+        
+    data += data_start
+    
+    if arg.safemode == 'full':
+        print('Warning: Setting Roomba(s) to full control mode... Sensors are disabled in this mode.')
+        data += data_full
+    elif arg.safemode == 'safe':
+        print('Setting Roomba(s) to safe mode.')
+        data += data_safe
+    else:
+        print('Error: Mode not recognized.')
+        exit()
+    
+    if arg.drive == 'clean':
+        print('Clean selected.')
+        data += data_clean
+    elif arg.drive == 'dock':
+        print('Dock selected.')
+        data += data_dock
+    elif arg.drive == 'drive':
         print('Drive selected.')
         if arg.direction == 'forward':
             print('Forward selected.')
-            data = data_forward_full
+            data += data_forward_full
         elif arg.direction == 'forwardhalf':
             print('Half speed forward selected.')
-            data = data_forward_half
+            data += data_forward_half
         elif arg.direction == 'rotatecw':
             print('Rotate Clockwise selected.')
-            data = data_rotate_cw
+            data += data_rotate_cw
         elif arg.direction == 'rotateccw':
             print('Rotate Counterclockwise selected.')
-            data = data_rotate_ccw
+            data += data_rotate_ccw
         elif arg.direction == 'backward':
             print('Backward selected.')
-            data = data_backward_full
+            data += data_backward_full
         elif arg.direction == 'backwardhalf':
             print('Half speed backward selected.')
-            data = data_backward_half
+            data += data_backward_half
         else:
             print('Invalid Roomba direction.')
             return
@@ -149,22 +166,22 @@ def main():
         print('Drive Direct selected.')
         if arg.direction == 'forward':
             print('Forward selected.')
-            data = data_dd_forward_full
+            data += data_dd_forward_full
         elif arg.direction == 'forwardhalf':
             print('Half speed forward selected.')
-            data = data_dd_forward_half
+            data += data_dd_forward_half
         elif arg.direction == 'rotatecw':
             print('Rotate Clockwise selected.')
-            data = data_dd_rotate_cw
+            data += data_dd_rotate_cw
         elif arg.direction == 'rotateccw':
             print('Rotate Counterclockwise selected.')
-            data = data_dd_rotate_ccw
+            data += data_dd_rotate_ccw
         elif arg.direction == 'backward':
             print('Backward selected.')
-            data = data_dd_backward_full
+            data += data_dd_backward_full
         elif arg.direction == 'backwardhalf':
             print('Half speed backward selected.')
-            data = data_dd_backward_half
+            data += data_dd_backward_half
         else:
             print('Invalid Roomba direction.')
             return
@@ -172,96 +189,41 @@ def main():
         print('Drive PWM selected.')
         if arg.direction == 'forward':
             print('Forward selected.')
-            data = data_pwm_forward_full
+            data += data_pwm_forward_full
         elif arg.direction == 'forwardhalf':
             print('Half speed forward selected.')
-            data = data_pwm_forward_half
+            data += data_pwm_forward_half
         elif arg.direction == 'rotatecw':
             print('Rotate Clockwise selected.')
-            data = data_pwm_rotate_cw
+            data += data_pwm_rotate_cw
         elif arg.direction == 'rotateccw':
             print('Rotate Counterclockwise selected.')
-            data = data_pwm_rotate_ccw
+            data += data_pwm_rotate_ccw
         elif arg.direction == 'backward':
             print('Backward selected.')
-            data = data_pwm_backward_full
+            data += data_pwm_backward_full
         elif arg.direction == 'backwardhalf':
             print('Half speed backward selected.')
-            data = data_pwm_backward_half
+            data += data_pwm_backward_half
         else:
             print('Invalid Roomba direction.')
             return
     
+    data += data_stop
+    
+    data_size = str(int(len(data[2:])/2))
+    if len(data_size) == 1:
+        data_size = '0' + data_size
+    data = data[:2] + data_size + data[2:]
+    
     if roomba != 'both':
-        print('Starting Roomba OI...')
-        if send(roomba, data_start):
-            time.sleep(1)
-            if arg.safemode == 'full':
-                print('Warning: Setting Roomba to full control mode... Sensors are disabled in this mode.')
-                send(roomba, data_full)
-            elif arg.safemode == 'safe':
-                print('Setting Roomba to safe mode.')
-                send(roomba, data_safe)
-            else:
-                print('Error: Mode not recognized.')
-                exit()
-            time.sleep(1)
-            print('Moving Roomba...')
-            send(roomba, data)
-            time.sleep(10)
-            print('Stopping Roomba...')
-            send(roomba, data_halt)
-            time.sleep(1)
-            print('Stopping Roomba OI...')
-            send(roomba, data_stop)
-        else:
-            print('Failed to start Roomba OI at {}'.format(roomba))
+        if not send(roomba, data):
+            print('Failed to connect to Roomba at {}'.format(roomba))
+            exit()
     else:
-        print('Starting Roomba0 OI...')
-        if send('192.168.1.33', data_start):
-            time.sleep(1)
-            if arg.safemode == 'full':
-                print('Warning: Setting Roomba0 to full control mode... Sensors are disabled in this mode.')
-                send('192.168.1.33', data_full)
-            elif arg.safemode == 'safe':
-                print('Setting Roomba0 to safe mode.')
-                send('192.168.1.33', data_safe)
-            else:
-                print('Error: Mode not recognized.')
-                exit()
-            time.sleep(1)
-            print('Moving Roomba0...')
-            send('192.168.1.33', data)
-            time.sleep(10)
-            print('Stopping Roomba0...')
-            send('192.168.1.33', data_halt)
-            time.sleep(1)
-            print('Stopping Roomba0 OI...')
-            send('192.168.1.33', data_stop)
-        else:
+        if not send('192.168.1.33', data):
             print('Failed to start Roomba0 OI.')
-        print('Starting Roomba1 OI...')
-        if send('192.168.1.38', data_start):
-            time.sleep(1)
-            if arg.safemode == 'full':
-                print('Warning: Setting Roomba1 to full control mode... Sensors are disabled in this mode.')
-                send('192.168.1.38', data_full)
-            elif arg.safemode == 'safe':
-                print('Setting Roomba1 to safe mode.')
-                send('192.168.1.38', data_safe)
-            else:
-                print('Error: Mode not recognized.')
-                exit()
-            time.sleep(1)
-            print('Moving Roomba1...')
-            send('192.168.1.38', data)
-            time.sleep(10)
-            print('Stopping Roomba1...')
-            send('192.168.1.38', data_halt)
-            time.sleep(1)
-            print('Stopping Roomba1 OI...')
-            send('192.168.1.38', data_stop)
-        else:
+        if not send('192.168.1.38', data):
             print('Failed to start Roomba1 OI.')
 
 
