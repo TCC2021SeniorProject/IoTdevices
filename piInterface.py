@@ -16,7 +16,7 @@ def piConnect(piID):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ip, username=piUsername, password=piPassword, look_for_keys=False)
 
-        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('cd Roomba && python3 roombaDirect.py -d forward -t 10')
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('cd Roomba/IoTdevices && python3 roombaDirect.py -d forward -t 10')
         output = ssh_stdout.readlines()
         for line in output:
             print(line)
