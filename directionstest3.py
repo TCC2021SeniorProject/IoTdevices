@@ -113,16 +113,28 @@ def main():
     blid1 = '80B5072460425890'
     password1 = ':1:1635802266:wFGtE5itVgxeqgc5'
 
-    options = {
+    options0 = {
         port: 8883,
-        clientId: blid,
+        clientId: blid0,
         rejectUnauthorized: false,
         protocolId: 'MQTT',
         protocolVersion: 4,
         ciphers: 'AES128-SHA256',
         clean: false,
         username: blid,
-        password: password
+        password: password0
+    };
+    
+     options1 = {
+        port: 8883,
+        clientId: blid1,
+        rejectUnauthorized: false,
+        protocolId: 'MQTT',
+        protocolVersion: 4,
+        ciphers: 'AES128-SHA256',
+        clean: false,
+        username: blid,
+        password: password1
     };
 
     if arg.oneroomba == '0':
