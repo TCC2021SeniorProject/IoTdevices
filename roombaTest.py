@@ -8,8 +8,10 @@ port = '/dev/ttyS0' # ttyUSB0
 roomba = Create2(port)
 roomba.start()
 roomba.safe()
-#roomba.drive_direct(100, 100)
-#roomba.drive_stop()
 sensors = roomba.get_sensors()
 print(sensors.battery_charge())
+if sensors.battery_charge() > 100:
+    roomba.drive_direct(100, 100)
+    sleep(10)
+    roomba.drive_stop()
 roomba.close()
