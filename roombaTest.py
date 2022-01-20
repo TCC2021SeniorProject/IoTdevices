@@ -10,7 +10,7 @@ roomba.start()
 roomba.safe()
 sensors = roomba.get_sensors()
 print(sensors.battery_charge())
-if sensors.battery_charge() > 100:
+if sensors.battery_charge() > 30000:
     roomba.drive_direct(100, 100)
     sleep(10)
     roomba.drive_stop()
