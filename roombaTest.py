@@ -20,9 +20,9 @@ try:
 except:
     print('Unable to retrieve Roomba data.')
 roomba.drive_direct(-200, -200)
-sleep(2)
+time.sleep(2)
 roomba.drive_stop()
-roomba.drive_direct(-500, 500)
-sleep(3)
+roomba.drive_direct(-100, 100)
+time.sleep(5)
 roomba.drive_stop()
 roomba.close()
