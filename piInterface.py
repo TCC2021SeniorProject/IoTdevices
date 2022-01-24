@@ -26,6 +26,9 @@ def piConnect(piID):
     elif piID == 1:
         #ssh into Pi1
         print('<<< FEATURE PENDING >>>')
+        ip = '192.168.1.36'
+        piUsername = 'pi'
+        piPassword = 'ModelIoT'
 
     else:
         print('Invalid Roomba ID. Exiting.')
