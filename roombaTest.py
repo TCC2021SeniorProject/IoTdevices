@@ -12,9 +12,12 @@ roomba.start()
 print('Roomba OI started')
 roomba.safe()
 print('Roomba set to safe mode')
-sensors = roomba.get_sensors()
-if sensors:
-    print('Got Roomba info')
+try:
+    sensors = roomba.get_sensors()
+    if sensors:
+        print('Got Roomba info')
+except:
+    print('Unable to retrieve Roomba data.')
 print(sensors.battery_charge())
 if sensors.battery_charge() > 30000:
     roomba.drive_direct(-200, -200)
