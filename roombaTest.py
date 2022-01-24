@@ -4,7 +4,7 @@ from pycreate2 import Create2
 import time
 
 
-port = '/dev/ttyS0' # ttyUSB0
+port = '/dev/ttyUSB0' # ttyUSB0
 print('Port set to \'/dev/ttyS0\'')
 roomba = Create2(port)
 print('Roomba object created')
