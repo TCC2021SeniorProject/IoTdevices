@@ -1,7 +1,5 @@
 from pprint import pformat
-#import json
 import socket
-#import serial
 import ssl
 import sys
 import time
@@ -51,7 +49,8 @@ def send(addr, data):
 def main():
     #-------- Movement Data ----------------
     # Basics
-    data = 'f0'
+    data = ''
+    data_mqtt = 'f0'
     data_start = '80'                   # Data to start OI
     data_safe = '83'                    # Data for safe mode
     data_full = '84'                    # Data for full mode
@@ -81,14 +80,7 @@ def main():
     data_pwm_backward_full = '92ff01ff01'
     data_pwm_backward_half = '9288018801'
     
-#    data = 'f005' + data_start + data_safe + data_drive + data_rotate_cw
-    data = 'f0028084'
-    send('192.168.1.33', data)
-    send('192.168.1.38', data)
-    data = 'f0058c013e20'
-    send('192.168.1.33', data)
-    send('192.168.1.38', data)
-    data = 'f0028d00'
+    data = data_start + data_safe + data_clean
     send('192.168.1.33', data)
     send('192.168.1.38', data)
 

@@ -7,78 +7,22 @@ import time
 from ast import literal_eval
 
 def send(addr, data):
-    packet = bytes.fromhex(data)
-    #packet = serial.to_bytes(data)
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(10)
-
-    #context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    context = ssl.SSLContext()
-    context.set_ciphers('DEFAULT@SECLEVEL=2:HIGH:!DH:!aNULL')
-    wrappedSocket = context.wrap_socket(sock)
-
-    no_error = True
-    try:
-        wrappedSocket.connect((addr, 8883))
-        #ser = serial.Serial(8883, 115200)
-        #ser.write(packet)
-        wrappedSocket.send(packet)
-        print(f'\'{data}\' sent to {addr} as {packet}')
-        wrappedSocket.close()
-        return no_error
-    except socket.timeout as e:
-        no_error = False
-        print('Connection Timeout Error (for {}): {}'.format(addr, e))
-    except (ConnectionRefusedError, OSError) as e:
-        no_error = False
-        if e.errno == 111:      #errno.ECONNREFUSED
-            print('Unable to Connect to roomba at ip {}. Make sure nothing else is connected (app?), '
-                            'as only one connection at a time is allowed'.format(addr))
-        elif e.errno == 113:    #errno.No Route to Host
-            print('Unable to contact roomba on ip {}. Is the ip correct?'.format(addr))
-        else:
-            print("Connection Error (for {}): {}".format(addr, e))
-    except Exception as e:
-        no_error = False
-        print(e)
-    return no_error
+    packet = data.encode()
+    serialRoomba = serial.Serial('192.168.1.33') # ttyUSBx format on Linux
+    serialRoomba.baudrate = 115200 # set Baud rate to Roomba default
+    serialRoomba.bytesize = 24     # Number of data bytes = 3
+    serialRoomba.parity   = 'N'    # No parity
+    serialRoomba.stopbits = 1      # Number of Stop bits = 1
+    time.sleep(3)
+    serialRoomba.write(packet)     # Transmit packet over serial
+    serialRoomba.close()           # Close the port
 
 
 def main():
-    import argparse
-    
-    #-------- Command Line -----------------
-    parser = argparse.ArgumentParser(
-        description='Forward MQTT data to Roomba for directional control.')
-    parser.add_argument(
-        '-o','--oneroomba',
-        action='store',
-        type=str,
-        default='2',
-        help='Choose a Roomba. \'0\' (Roomba0), \'1\' (Roomba1), or \'2\' (Both).')
-    parser.add_argument(
-        '-m','--direction',
-        action='store',
-        type=str,
-        default='backward',
-        help='Choose a direction. \'forward\', \'forwardhalf\', \'rotatecw\', \'rotateccw\', \'backward\', \'backwardhalf\'')
-    parser.add_argument(
-        '-s','--safemode',
-        action='store',
-        type=str,
-        default='safe',
-        help='Choose safe mode or full mode. Default is safe. \'safe\' or \'full\'.')
-    parser.add_argument(
-        '-d','--drive',
-        action='store',
-        type=str,
-        default='clean',
-        help='Choose a drive mode. \'drive\', \'dd\', \'pwm\', \'clean\', or \'dock\'.')
-    arg = parser.parse_args()
-
     #-------- Movement Data ----------------
     # Basics
-    data = 'f0'
+    data = ''
+    data_mqtt = 'f0'
     data_start = '80'                   # Data to start OI
     data_safe = '83'                    # Data for safe mode
     data_full = '84'                    # Data for full mode
@@ -108,128 +52,9 @@ def main():
     data_pwm_backward_full = '92ff01ff01'
     data_pwm_backward_half = '9288018801'
     
-    if arg.oneroomba == '0':
-        roomba = '192.168.1.33'
-    elif arg.oneroomba == '1':
-        roomba = '192.168.1.38'
-    elif arg.oneroomba == '2':
-        roomba = 'both'
-    else:
-        print('Invalid Roomba selection.')
-        
-#    data = data_start
-    
-    if arg.safemode == 'full':
-        print('Warning: Setting Roomba(s) to full control mode... Sensors are disabled in this mode.')
-        data = data_full
-    elif arg.safemode == 'safe':
-        print('Setting Roomba(s) to safe mode.')
-        data = data_safe
-    else:
-        print('Error: Mode not recognized.')
-        exit()
-    
-    if arg.drive == 'clean':
-        print('Clean selected.')
-        data = data_clean
-    elif arg.drive == 'dock':
-        print('Dock selected.')
-        data = data_dock
-    elif arg.drive == 'drive':
-        print('Drive selected.')
-        if arg.direction == 'forward':
-            print('Forward selected.')
-            data = data_forward_full
-        elif arg.direction == 'forwardhalf':
-            print('Half speed forward selected.')
-            data = data_forward_half
-        elif arg.direction == 'rotatecw':
-            print('Rotate Clockwise selected.')
-            data = data_rotate_cw
-        elif arg.direction == 'rotateccw':
-            print('Rotate Counterclockwise selected.')
-            data = data_rotate_ccw
-        elif arg.direction == 'backward':
-            print('Backward selected.')
-            data = data_backward_full
-        elif arg.direction == 'backwardhalf':
-            print('Half speed backward selected.')
-            data = data_backward_half
-        else:
-            print('Invalid Roomba direction.')
-            return
-    elif arg.drive == 'dd':
-        print('Drive Direct selected.')
-        if arg.direction == 'forward':
-            print('Forward selected.')
-            data = data_dd_forward_full
-        elif arg.direction == 'forwardhalf':
-            print('Half speed forward selected.')
-            data = data_dd_forward_half
-        elif arg.direction == 'rotatecw':
-            print('Rotate Clockwise selected.')
-            data = data_dd_rotate_cw
-        elif arg.direction == 'rotateccw':
-            print('Rotate Counterclockwise selected.')
-            data = data_dd_rotate_ccw
-        elif arg.direction == 'backward':
-            print('Backward selected.')
-            data = data_dd_backward_full
-        elif arg.direction == 'backwardhalf':
-            print('Half speed backward selected.')
-            data = data_dd_backward_half
-        else:
-            print('Invalid Roomba direction.')
-            return
-    elif arg.drive == 'pwm':
-        print('Drive PWM selected.')
-        if arg.direction == 'forward':
-            print('Forward selected.')
-            data = data_pwm_forward_full
-        elif arg.direction == 'forwardhalf':
-            print('Half speed forward selected.')
-            data = data_pwm_forward_half
-        elif arg.direction == 'rotatecw':
-            print('Rotate Clockwise selected.')
-            data = data_pwm_rotate_cw
-        elif arg.direction == 'rotateccw':
-            print('Rotate Counterclockwise selected.')
-            data = data_pwm_rotate_ccw
-        elif arg.direction == 'backward':
-            print('Backward selected.')
-            data = data_pwm_backward_full
-        elif arg.direction == 'backwardhalf':
-            print('Half speed backward selected.')
-            data = data_pwm_backward_half
-        else:
-            print('Invalid Roomba direction.')
-            return
-    
-#    data += data_stop
-    
-#    data_size = str(int(len(data[2:])/2))
-#    if len(data_size) == 1:
-#        data_size = '0' + data_size
-#    data = data[:2] + data_size + data[2:]
-
-    ser = serial.Serial(8883, 115200)
-    ser.write(data_start)
-    if arg.safemode == 'full':
-        ser.write(data_full)
-    else:
-        ser.write(data_safe)
-    ser.write(data)
-    ser.write(data_stop)
-
-#    if roomba != 'both':
-#        if not send(roomba, data):
-#            print('Failed to connect to Roomba at {}'.format(roomba))
-#            exit()
-#    else:
-#        if not send('192.168.1.33', data):
-#            print('Failed to connect to Roomba0.')
-#        if not send('192.168.1.38', data):
-#            print('Failed to connect to Roomba1.')
+    data = data_start + data_safe + data_clean
+    send('192.168.1.33', data)
+    send('192.168.1.38', data)
 
 
 if __name__ == '__main__':
