@@ -5,24 +5,22 @@ import time
 
 
 port = '/dev/ttyUSB0' # ttyUSB0
-print('Port set to \'/dev/ttyS0\'')
+print('Port set to \'/dev/ttyUSB0\'')
 roomba = Create2(port)
 print('Roomba object created')
 roomba.start()
 print('Roomba OI started')
 roomba.safe()
 print('Roomba set to safe mode')
-try:
-    sensors = roomba.get_sensors()
-    if sensors:
-        print('Got Roomba info')
-        print(sensors.battery_charge())
-except:
-    print('Unable to retrieve Roomba data.')
 roomba.drive_direct(-200, -200)
+print('Roomba told to move backwards at 40% speed for 2 seconds')
 time.sleep(2)
 roomba.drive_stop()
+print('Roomba told to stop')
 roomba.drive_direct(-100, 100)
+print('Roomba told to rotate clockwise at 20% speed for 5 seconds')
 time.sleep(5)
 roomba.drive_stop()
+print('Roomba told to stop')
 roomba.close()
+print('Roomba OI closed')
