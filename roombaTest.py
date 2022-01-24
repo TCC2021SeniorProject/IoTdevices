@@ -16,14 +16,13 @@ try:
     sensors = roomba.get_sensors()
     if sensors:
         print('Got Roomba info')
+        print(sensors.battery_charge())
 except:
     print('Unable to retrieve Roomba data.')
-print(sensors.battery_charge())
-if sensors.battery_charge() > 30000:
-    roomba.drive_direct(-200, -200)
-    sleep(2)
-    roomba.drive_stop()
-    roomba.drive_direct(-500, 500)
-    sleep(3)
-    roomba.drive_stop()
+roomba.drive_direct(-200, -200)
+sleep(2)
+roomba.drive_stop()
+roomba.drive_direct(-500, 500)
+sleep(3)
+roomba.drive_stop()
 roomba.close()
