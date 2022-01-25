@@ -9,7 +9,6 @@ def piConnect():
     ip0 = '192.168.1.4'
     pi0User = 'pi'
     pi0Pw = 'ModelIoT'
-
     ip1 = '192.168.1.36'
     pi1User = 'pi'
     pi1Pw = 'ModelIoT'
@@ -18,7 +17,6 @@ def piConnect():
     ssh0 = paramiko.SSHClient()
     print('Creating SSH objects for Pi1...')
     ssh1 = paramiko.SSHClient()
-
     print('Loading system host keys for Pi0...')
     ssh0.load_system_host_keys()
     print('Loading system host keys for Pi1...')
@@ -48,9 +46,8 @@ def piConnect():
 
     return ssh0, ssh1
 
-# Send commands to Pis
+# Send parameter commands to Pis
 def piSend(ssh0, ssh1, com):
-    print('>>> YET TO BE IMPLEMENTED')
     try:
         print(f'Sending command \'{com}\' to Pi0...')
         ssh0.exec_command(com)
