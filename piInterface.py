@@ -1,39 +1,80 @@
-'''Script to run on Main device, written by Cael Shoop.'''
+'''Script to run on main device. Written by Cael Shoop.'''
 # This script establishes ssh connections to the Pis on the Roombas.
 
 import paramiko
 
+# Create SSH connection to both Pis
+def piConnect():
+    print('Creating SSH connections to Pi0 and Pi1...')
+    ip0 = '192.168.1.4'
+    pi0User = 'pi'
+    pi0Pw = 'ModelIoT'
 
-def piConnect(piID):
-    if piID == 0:
-        print('<<< FEATURE IN PROGRESS >>>')
-        ip = '192.168.1.4'
-        piUsername = 'pi'
-        piPassword = 'ModelIoT'
-        ssh = paramiko.SSHClient()
+    ip1 = '192.168.1.36'
+    pi1User = 'pi'
+    pi1Pw = 'ModelIoT'
 
-        ssh.load_system_host_keys()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, username=piUsername, password=piPassword, look_for_keys=False)
+    print('Creating SSH objects for Pi0...')
+    ssh0 = paramiko.SSHClient()
+    print('Creating SSH objects for Pi1...')
+    ssh1 = paramiko.SSHClient()
 
-        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command('cd Roomba/IoTdevices && python3 roombaDirect.py -d forward -t 10')
-        output = ssh_stdout.readlines()
-        for line in output:
+    print('Loading system host keys for Pi0...')
+    ssh0.load_system_host_keys()
+    print('Setting missing host key policy for Pi0...')
+    ssh0.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        print('Establishing SSH connection to Pi0...')
+        ssh0.connect(ip0, username=pi0User, password=pi0Pw, look_for_keys=False)
+        print('Pi0 SSH connection established.')
+    except:
+        print('Connection to Pi0 Failed.')
+
+    print('Loading system host keys for Pi1...')
+    ssh1.load_system_host_keys()
+    print('Setting missing host key policy for Pi1...')
+    ssh1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        print('Establishing SSH connection to Pi0...')
+        ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
+        print('Pi1 SSH connection established.')
+    except:
+        print('Conenction to Pi1 Failed.')
+
+# Test function to test connection to Roombas
+def piTest(ssh0, ssh1):
+    if ssh0:
+        print('Running roombaTest.py on Pi0...')
+        ssh0.exec_command('~/cd Roomba/IoTdevices') # Trying to send the commands separately for testing
+        ssh0_stdin, ssh0_stdout, ssh0_stderr = ssh0.exec_command('python3 roombaTest.py')
+    if ssh1:
+        print('Running roombaTest.py on Pi1...') # I imagine they will work the same but want to check
+        ssh1_stdin, ssh1_stdout, ssh1_stderr = ssh1.exec_command('cd ~/Roomba/IoTdevices && python3 roombaTest.py')
+    
+    if ssh0:
+        print('Pi0 output:')
+        output0 = ssh0_stdout.readlines()
+        for line in output0:
             print(line)
 
-        return ssh
+    if ssh1:
+        print('Pi1 output:')
+        output1 = ssh1_stdout.readlines()
+        for line in output1:
+            print(line)
 
-    elif piID == 1:
-        #ssh into Pi1
-        print('<<< FEATURE PENDING >>>')
-        ip = '192.168.1.36'
-        piUsername = 'pi'
-        piPassword = 'ModelIoT'
+# Close SSH connections
+def piDisconnect(ssh0, ssh1):
+    try:
+        print('Closing Pi0 SSH connection...')
+        ssh0.close()
+        print('Successfully closed Pi0 SSH connection.')
+    except:
+        print('Pi0 SSH connection already closed.')
 
-    else:
-        print('Invalid Roomba ID. Exiting.')
-        exit()
-
-
-def piDisconnect(ssh):
-    ssh.close()
+    try:
+        print('Closing Pi1 SSH connection...')
+        ssh1.close()
+        print('Successfully closed Pi1 SSH connection.')
+    except:
+        print('Pi1 SSH connection already closed.')
