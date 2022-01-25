@@ -21,35 +21,59 @@ def piConnect():
 
     print('Loading system host keys for Pi0...')
     ssh0.load_system_host_keys()
+    print('Loading system host keys for Pi1...')
+    ssh1.load_system_host_keys()
     print('Setting missing host key policy for Pi0...')
     ssh0.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    print('Setting missing host key policy for Pi1...')
+    ssh1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
     try:
         print('Establishing SSH connection to Pi0...')
         ssh0.connect(ip0, username=pi0User, password=pi0Pw, look_for_keys=False)
-        print('Pi0 SSH connection established.')
+        print('Pi0 SSH connection established.\nMoving to IoTdevices directory...')
+        ssh0.exec_command('~/cd Roomba/IoTdevices')
+        print('Pi0 SSH is now in IoTdevices directory.')
     except:
         print('Connection to Pi0 Failed.')
 
-    print('Loading system host keys for Pi1...')
-    ssh1.load_system_host_keys()
-    print('Setting missing host key policy for Pi1...')
-    ssh1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         print('Establishing SSH connection to Pi0...')
         ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
-        print('Pi1 SSH connection established.')
+        print('Pi1 SSH connection established.\nMoving to IoTdevices directory...')
+        ssh1.exec_command('~/cd Roomba/IoTdevices')
+        print('Pi1 SSH is now in IoTdevices directory.')
     except:
-        print('Conenction to Pi1 Failed.')
+        print('Connection to Pi1 Failed.')
+
+    return ssh0, ssh1
+
+# Send commands to Pis
+def piSend(ssh0, ssh1, com):
+    print('>>> YET TO BE IMPLEMENTED')
+    try:
+        print(f'Sending command \'{com}\' to Pi0...')
+        ssh0.exec_command(com)
+        print('Command sent to Pi0.')
+    except:
+        print('Command failed to send to Pi0.')
+
+    try:
+        print(f'Sending command \'{com}\' to Pi1...')
+        ssh1.exec_command(com)
+        print('Command sent to Pi1.')
+    except:
+        print('Command failed to send to Pi1.')
+
 
 # Test function to test connection to Roombas
 def piTest(ssh0, ssh1):
     if ssh0:
         print('Running roombaTest.py on Pi0...')
-        ssh0.exec_command('~/cd Roomba/IoTdevices') # Trying to send the commands separately for testing
         ssh0_stdin, ssh0_stdout, ssh0_stderr = ssh0.exec_command('python3 roombaTest.py')
     if ssh1:
-        print('Running roombaTest.py on Pi1...') # I imagine they will work the same but want to check
-        ssh1_stdin, ssh1_stdout, ssh1_stderr = ssh1.exec_command('cd ~/Roomba/IoTdevices && python3 roombaTest.py')
+        print('Running roombaTest.py on Pi1...')
+        ssh1_stdin, ssh1_stdout, ssh1_stderr = ssh1.exec_command('python3 roombaTest.py')
     
     if ssh0:
         print('Pi0 output:')
