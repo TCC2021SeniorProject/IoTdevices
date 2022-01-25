@@ -1,5 +1,5 @@
 '''Script to run on main device. Written by Cael Shoop.'''
-# This script establishes ssh connections to the Pis on the Roombas.
+# This script establishes ssh connections from the control device to the Pis on the Roombas.
 
 import paramiko
 
