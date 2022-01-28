@@ -6,7 +6,7 @@ import time
 
 
 ssh0, ssh1 = piI.piConnect()
-sleep(1)
+time.sleep(1)
 piI.piSend(ssh0, 'drive_direct(-200, -200)', 0)
 piI.piSend(ssh1, 'drive_direct(-200, -200)', 1)
 time.sleep(2)

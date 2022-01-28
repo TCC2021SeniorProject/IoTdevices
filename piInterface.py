@@ -46,7 +46,7 @@ def piConnect():
         print('Connection to Pi0 Failed.')
 
     try:
-        print('Establishing SSH connection to Pi0...')
+        print('Establishing SSH connection to Pi1...')
         ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
         print('Success.\nMoving to IoTdevices directory...')
         ssh1.exec_command('~/cd Roomba/IoTdevices')
