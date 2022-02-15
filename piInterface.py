@@ -5,19 +5,24 @@ import paramiko
 # Create SSH connection to both Pis/Roombas
 def piCon():
     print('Creating SSH connections to Pi0 and Pi1...')
+
     ip0 = '192.168.1.4'
     pi0User = 'pi'
     pi0Pw = 'ModelIoT'
     port0 = '/dev/ttyUSB0'
+
     ip1 = '192.168.1.36'
     pi1User = 'pi'
     pi1Pw = 'ModelIoT'
     port1 = '/dev/ttyUSB0'
 
+    ssh0 = paramiko.SSHClient()
+    ssh1 = paramiko.SSHClient()
+
+    ssh = []
+
     # try:
     #     print('Preparing SSH connections...')
-    #     ssh0 = paramiko.SSHClient()
-    #     ssh1 = paramiko.SSHClient()
     #     ssh0.load_system_host_keys()
     #     ssh1.load_system_host_keys()
     #     ssh0.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -33,6 +38,7 @@ def piCon():
         stdin, stdout, stderr = ssh0.exec_command('echo "Hello world!"')
         if stdout == 'Hello world!':
             print('Success.\nRoomba0 is ready for commands.')
+        ssh.append(ssh0)
     except:
         print('Connection to Pi0 Failed.')
 
@@ -42,10 +48,11 @@ def piCon():
         stdin, stdout, stderr = ssh1.exec_command('echo "Hello world!"')
         if stdout == 'Hello world!':
             print('Success.\nRoomba1 is ready for commands.')
+        ssh.append(ssh1)
     except:
         print('Connection to Pi1 Failed.')
 
-    return ssh0, ssh1
+    return ssh
 
 # Send parameter commands to a Pi/Roomba
 def piSend(ssh, com, piNum):

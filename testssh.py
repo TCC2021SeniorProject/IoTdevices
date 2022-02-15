@@ -5,12 +5,9 @@ import piInterface as piI
 import time
 
 
-ssh0, ssh1 = piI.piConnect()
+ssh0, ssh1 = piI.piCon()
 time.sleep(1)
-piI.piSend(ssh0, 'drive_direct(-200, -200)', 0)
-piI.piSend(ssh1, 'drive_direct(-200, -200)', 1)
-time.sleep(2)
-piI.piSend(ssh0, 'drive_direct(-300, 300)', 0)
-piI.piSend(ssh1, 'drive_direct(300, -300)', 1)
+piI.piSend(ssh0, 'python3 transOut.py', 0)
+piI.piSend(ssh1, 'python3 transOut.py', 1)
 time.sleep(3)
-piI.piDisconnect(ssh0, ssh1)
+piI.piDiscon(ssh0, ssh1)
