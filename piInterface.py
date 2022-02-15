@@ -21,16 +21,14 @@ def piCon():
 
     ssh = []
 
-    # try:
-    #     print('Preparing SSH connections...')
-    #     ssh0.load_system_host_keys()
-    #     ssh1.load_system_host_keys()
-    #     ssh0.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    #     ssh1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    #     print('Success.')
-    # except:
-    #     print('Failed to set up SSH. Exiting.')
-    #     exit()
+    try:
+        print('Preparing SSH connections...')
+        ssh0.load_system_host_keys()
+        ssh1.load_system_host_keys()
+        print('Success.')
+    except:
+        print('Failed to set up SSH. Exiting.')
+        exit()
 
     try:
         print('Establishing SSH connection to Pi0...')

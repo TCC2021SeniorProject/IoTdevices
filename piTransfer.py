@@ -3,6 +3,9 @@ import paramiko
 ssh0 = paramiko.SSHClient()
 ssh1 = paramiko.SSHClient()
 
+ssh0.load_system_host_keys()
+ssh1.load_system_host_keys()
+
 ssh0.connect('192.168.1.4', username='pi', password='ModelIoT')
 ssh1.connect('192.168.1.36', username='pi', password='ModelIoT')
 
