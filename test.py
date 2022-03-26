@@ -1,7 +1,10 @@
 from pycreate2 import Create2
 import time
 
-roomba = Create2('/dev/ttyUSB1')
+try:
+    roomba = Create2('/dev/ttyUSB0')
+except:
+    roomba = Create2('/dev/ttyUSB1')
 print('Setting to start')
 roomba.start()
 print('Setting to full')

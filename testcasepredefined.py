@@ -1,56 +1,46 @@
 # Written by Cael Shoop.
 
-def Dock():
-    code
+import time
+from pycreate2 import Create2
 
-def GoFront():
-    code
+def com_dance():
+    roomba.drive_direct(-190, -190)
+    time.sleep(1)
+    roomba.drive_direct(-400, 400)
+    time.sleep(1)
+    roomba.drive_direct(190, 190)
+    time.sleep(1)
+    roomba.drive_direct(-400, 400)
+    time.sleep(1)
+    roomba.drive_direct(190, 190)
+    time.sleep(1)
+    roomba.drive_direct(-400, 400)
+    time.sleep(1)
+    roomba.drive_direct(190, 190)
+    time.sleep(1)
+    roomba.drive_direct(-400, 400)
+    time.sleep(1)
+    roomba.drive_direct(190, 190)
+    time.sleep(1)
+    roomba.drive_stop()
+    done = 1
 
-def Ready():
-    code
 
-def Connect():
-    ip0 = '192.168.1.4'
-    pi0User = 'pi'
-    pi0Pw = 'ModelIoT'
-    port0 = '/dev/ttyUSB0'
+def com_dock():
+    roomba.seek_dock()
+    time.sleep(2)
+    roomba.close()
 
-    ip1 = '192.168.1.36'
-    pi1User = 'pi'
-    pi1Pw = 'ModelIoT'
-    port1 = '/dev/ttyUSB0'
 
-    ssh0 = paramiko.SSHClient()
-    ssh1 = paramiko.SSHClient()
-
-    global ssh
-    ssh = []
-
+def com_init():
+    global done
+    done = 0
     try:
-        print('Preparing SSH connections...')
-        ssh0.load_system_host_keys()
-        ssh1.load_system_host_keys()
-        print('Success.')
+        roomba = Create2('/dev/ttyUSB0')
     except:
-        print('Failed to set up SSH. Exiting.')
-        exit()
+        roomba = Create2('/dev/ttyUSB1')
 
-    try:
-        print('Establishing SSH connection to Pi0...')
-        ssh0.connect(ip0, username=pi0User, password=pi0Pw, look_for_keys=False)
-        stdin, stdout, stderr = ssh0.exec_command('echo "Hello world!"')
-        if stdin or stdout or stderr == 'Hello world!\n':
-            print('Success.\nRoomba0 is ready for commands.')
-        ssh.append(ssh0)
-    except:
-        print('Connection to Pi0 Failed.')
 
-    try:
-        print('Establishing SSH connection to Pi1...')
-        ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
-        stdin, stdout, stderr = ssh1.exec_command('echo "Hello world!"')
-        if stdin or stdout or stderr == 'Hello world!\n':
-            print('Success.\nRoomba1 is ready for commands.')
-        ssh.append(ssh1)
-    except:
-        print('Connection to Pi1 Failed.')
+def Initialized():
+    roomba.start()
+    roomba.full()

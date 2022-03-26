@@ -12,8 +12,13 @@ if not ssh:
     exit()
 
 '''This will transfer the file specified and run it'''
-piI.Transfer('test.py', 'test.py')
-piI.Send('python3 test.py', 0)
+# piI.Transfer('test.py', 'test.py')
+# piI.Send('python3 test.py', 0)
+# piI.Send('python3 test.py', 1)
+piI.Transfer('testcasepredefined.py', 'testcasepredefined.py')
+piI.Transfer('output.py', 'output.py')
+piI.Send('python3 output.py', 0)
+piI.Send('python3 output.py', 1)
 
 '''Executes written script directly'''
 #Version 1
