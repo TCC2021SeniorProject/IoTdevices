@@ -1,4 +1,5 @@
 import asyncio
+import time
 from pycreate2 import Create2
 
 direct1 = 0

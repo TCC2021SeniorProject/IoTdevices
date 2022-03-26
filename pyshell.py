@@ -1,7 +1,7 @@
 '''Script to test piInterface.py. Written by Cael Shoop.'''
 
 import paramiko
-import piInterfaceTEST as piI
+import piInterface as piI
 import time
 
 
