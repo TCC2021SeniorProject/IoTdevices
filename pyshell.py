@@ -11,18 +11,26 @@ if not ssh:
     print('Error. Exiting.')
     exit()
 
-'''This will transfer the file specified and run it'''
+'''This will transfer a file to both roombas and run it'''
+#Test
 piI.Transfer('test.py', 'test.py')
 piI.SendBoth('python3 test.py')
-time.sleep(5)
+time.sleep(10)
 piI.SendBoth('rm test.py')
-# piI.Transfer('testcasepredefined.py', 'testcasepredefined.py')
+# piI.Transfer('predefined.py', 'predefined.py')
 # piI.Transfer('output.py', 'output.py')
 # piI.SendBoth('python3 output.py')
+# time.sleep(10)
+# piI.SendBoth('rm predefined.py')
 # piI.SendBoth('rm output.py')
 
-'''Executes written script directly'''
-# piI.Send('python3 -c "from pycreate2 import Create2;roomba = Create2("/dev/ttyUSB1");roomba.start();roomba.safe();roomba.drive_direct(-200, -200);time.sleep(2);roomba.drive_stop();time.sleep(1);roomba.seek_dock();roomba.close();quit()\n"', 0)
+'''This will send a file to one roomba'''
+piI.Transfer('predefined.py', 'predefined.py')
+piI.Transfer('output.py', 'output.py')
+piI.Send('python3 output.py', 0)
+time.sleep(10)
+piI.Send('rm predefined.py', 0)
+piI.Send('rm output.py', 0)
 
 time.sleep(3)
 piI.Disconnect()
