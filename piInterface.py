@@ -3,7 +3,7 @@
 import paramiko
 
 # Create SSH connection to both Pis/Roombas
-def piCon():
+def Connect():
     print('Creating SSH connections to Pi0 and Pi1...')
 
     ip0 = '192.168.1.4'
@@ -35,8 +35,8 @@ def piCon():
         print('Establishing SSH connection to Pi0...')
         ssh0.connect(ip0, username=pi0User, password=pi0Pw, look_for_keys=False)
         stdin, stdout, stderr = ssh0.exec_command('echo "Hello world!"')
-        if stdout == 'Hello world!':
-            print('Success.\nRoomba0 is ready for commands.')
+        if stdin or stdout or stderr == 'Hello world!':
+            print('Success.')
         ssh.append(ssh0)
     except:
         print('Connection to Pi0 Failed.')
@@ -45,8 +45,8 @@ def piCon():
         print('Establishing SSH connection to Pi1...')
         ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
         stdin, stdout, stderr = ssh1.exec_command('echo "Hello world!"')
-        if stdout == 'Hello world!':
-            print('Success.\nRoomba1 is ready for commands.')
+        if stdin or stdout or stderr == 'Hello world!':
+            print('Success.')
         ssh.append(ssh1)
     except:
         print('Connection to Pi1 Failed.')
@@ -54,7 +54,7 @@ def piCon():
     return ssh
 
 # Send parameter commands to a Pi/Roomba
-def piSend(com, piNum):
+def Send(com, piNum):
     try:
         print(f'Sending command \'{com}\' to Pi{piNum}...')
         ssh[piNum].exec_command(com)
@@ -62,8 +62,44 @@ def piSend(com, piNum):
     except:
         print(f'Command failed to send to Pi{piNum}.')
 
+# Send parameter commands to a Pi/Roomba
+def SendBoth(com):
+    try:
+        print(f'Sending command \'{com}\' to Pi0...')
+        ssh[0].exec_command(com)
+        print(f'Command sent to Pi0.')
+    except:
+        print(f'Command failed to send to Pi0.')
+    try:
+        print(f'Sending command \'{com}\' to Pi1...')
+        ssh[1].exec_command(com)
+        print(f'Command sent to Pi1.')
+    except:
+        print(f'Command failed to send to Pi1.')
+
+# Send file to both Pis
+def Transfer(localpath, remotepath):
+    if ssh[0]:
+        print(f'Sending {localpath} to Pi0...')
+        try:
+            sftp0 = ssh[0].open_sftp()
+            sftp0.put(localpath, remotepath)
+            sftp0.close()
+            print('Success.')
+        except:
+            print(f'Failed to send {localpath} to Pi0.')
+    if ssh[1]:
+        print(f'Sending {localpath} to Pi1...')
+        try:
+            sftp1 = ssh[1].open_sftp()
+            sftp1.put(localpath, remotepath)
+            sftp1.close()
+            print('Success.')
+        except:
+            print(f'Failed to send {localpath} to Pi1.')
+
 # Test function to test connection to Pis/Roombas
-def piTest():
+def Test():
     print('Running roombaTest.py on both devices...')
     ssh[0].exec_command('cd Roomba/IoTdevices')
     ssh[1].exec_command('cd Roomba/IoTdevices')
@@ -76,17 +112,17 @@ def piTest():
     print('roombaTest.py complete.')
 
 # Close SSH connections
-def piDiscon():
+def Disconnect():
     try:
         print('Closing Pi0 SSH connection...')
         ssh[0].close()
-        print('Successfully closed Pi0 SSH connection.')
+        print('Success.')
     except:
         print('Pi0 SSH connection already closed.')
 
     try:
         print('Closing Pi1 SSH connection...')
         ssh[1].close()
-        print('Successfully closed Pi1 SSH connection.')
+        print('Success.')
     except:
         print('Pi1 SSH connection already closed.')
