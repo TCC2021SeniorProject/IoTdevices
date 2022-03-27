@@ -4,43 +4,39 @@ import time
 from pycreate2 import Create2
 
 def com_dance():
-    roomba.drive_direct(-190, -190)
+    bot.drive_direct(-190, -190)
     time.sleep(1)
-    roomba.drive_direct(-400, 400)
+    bot.drive_direct(-450, 450)
     time.sleep(1)
-    roomba.drive_direct(190, 190)
+    bot.drive_direct(190, 190)
     time.sleep(1)
-    roomba.drive_direct(-400, 400)
+    bot.drive_direct(-450, 450)
     time.sleep(1)
-    roomba.drive_direct(190, 190)
+    bot.drive_direct(190, 190)
     time.sleep(1)
-    roomba.drive_direct(-400, 400)
+    bot.drive_direct(-450, 450)
     time.sleep(1)
-    roomba.drive_direct(190, 190)
+    bot.drive_direct(190, 190)
     time.sleep(1)
-    roomba.drive_direct(-400, 400)
+    bot.drive_direct(-450, 450)
     time.sleep(1)
-    roomba.drive_direct(190, 190)
+    bot.drive_direct(190, 190)
     time.sleep(1)
-    roomba.drive_stop()
+    bot.drive_stop()
     done = 1
 
 
 def com_dock():
-    roomba.seek_dock()
+    bot.seek_dock()
     time.sleep(2)
-    roomba.close()
+    bot.close()
 
 
 def com_init():
-    global done
-    done = 0
+    global bot
     try:
-        roomba = Create2('/dev/ttyUSB0')
+        bot = Create2('/dev/ttyUSB0')
     except:
-        roomba = Create2('/dev/ttyUSB1')
-
-
-def Initialized():
-    roomba.start()
-    roomba.full()
+        bot = Create2('/dev/ttyUSB1')
+    bot.start()
+    bot.safe()

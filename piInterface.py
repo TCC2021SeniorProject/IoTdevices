@@ -1,17 +1,18 @@
 '''This script establishes ssh connections from the control device to the Pis on the Roombas. Written by Cael Shoop.'''
 
 import paramiko
+import time
 
 # Create SSH connection to both Pis/Roombas
 def Connect():
     print('Creating SSH connections to Pi0 and Pi1...')
 
-    ip0 = '192.168.1.4'
+    ip0 = '192.168.0.7'
     pi0User = 'pi'
     pi0Pw = 'ModelIoT'
     port0 = '/dev/ttyUSB0'
 
-    ip1 = '192.168.1.36'
+    ip1 = '192.168.0.22'
     pi1User = 'pi'
     pi1Pw = 'ModelIoT'
     port1 = '/dev/ttyUSB0'
@@ -20,7 +21,9 @@ def Connect():
     ssh1 = paramiko.SSHClient()
 
     global ssh
+    global channel
     ssh = []
+    channel = []
 
     try:
         print('Preparing SSH connections...')
@@ -34,24 +37,24 @@ def Connect():
     try:
         print('Establishing SSH connection to Pi0...')
         ssh0.connect(ip0, username=pi0User, password=pi0Pw, look_for_keys=False)
-        stdin, stdout, stderr = ssh0.exec_command('echo "Hello world!"')
-        if stdin or stdout or stderr == 'Hello world!':
-            print('Success.')
         ssh.append(ssh0)
+        #ssh0.exec_command('echo "Hello world!"')
+        #print('Success.')
+        channel0 = ssh0.invoke_shell()
+        channel.append(channel0)
     except:
         print('Connection to Pi0 Failed.')
 
     try:
         print('Establishing SSH connection to Pi1...')
         ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
-        stdin, stdout, stderr = ssh1.exec_command('echo "Hello world!"')
-        if stdin or stdout or stderr == 'Hello world!':
-            print('Success.')
         ssh.append(ssh1)
+        #ssh1.exec_command('echo "Hello world!"')
+        #print('Success.')
+        channel1 = ssh1.invoke_shell()
+        channel.append(channel1)
     except:
         print('Connection to Pi1 Failed.')
-
-    return ssh
 
 # Send parameter commands to a Pi/Roomba
 def Send(com, piNum):
@@ -77,8 +80,90 @@ def SendBoth(com):
     except:
         print(f'Command failed to send to Pi1.')
 
+# Retrieve sensor data from Roombas
+def Sensors(arg, piNum): ########### Untested
+    out = channel[piNum].recv(9999)
+    channel[piNum].send('python3 sensor_data.py ' + arg + '\n')
+    while not channel[piNum].recv_ready():
+        time.sleep(3)
+    out = channel[piNum].recv(9999)
+    return out.decode("ascii")
+
+# Sends messages in shell
+def Shell(com, piNum):
+    out = channel[piNum].recv(9999)
+    channel[piNum].send(com)
+    while not channel[piNum].recv_ready():
+        time.sleep(3)
+    out = channel[piNum].recv(9999)
+    
+    return out.decode("ascii")
+
+# Sends a message to both shells
+def ShellBoth(com):
+    out = []
+    out0 = channel[0].recv(9999)
+    channel[0].send('ls | grep ' + localpath + '\n')
+    while not channel[0].recv_ready():
+        time.sleep(3)
+    out0 = channel[0].recv(9999)
+    out.append(out0.decode("ascii"))
+
+    out1 = channel[1].recv(9999)
+    channel[1].send('ls | grep ' + localpath + '\n')
+    while not channel[1].recv_ready():
+        time.sleep(3)
+    out1 = channel[1].recv(9999)
+    out.append(out1.decode("ascii"))
+
+    return out
+
+# Check if a Pi has a file
+def Check(localpath, piNum): ########### Untested
+    out = channel[piNum].recv(9999)
+    channel[piNum].send('ls | grep ' + localpath + '\n')
+    while not channel[piNum].recv_ready():
+        time.sleep(3)
+    out = channel[piNum].recv(9999)
+    if localpath in out.decode("ascii"):
+        return True
+    else:
+        return False
+
+# Check if a file is on both Pis
+def CheckBoth(localpath): ########### Untested
+    out0 = channel[0].recv(9999)
+    channel[0].send('ls | grep ' + localpath + '\n')
+    while not channel[0].recv_ready():
+        time.sleep(3)
+    out0 = channel[0].recv(9999)
+
+    out1 = channel[1].recv(9999)
+    channel[1].send('ls | grep ' + localpath + '\n')
+    while not channel[1].recv_ready():
+        time.sleep(3)
+    out1 = channel[1].recv(9999)
+
+    if localpath in out0.decode("ascii") and localpath in out1.decode("ascii"):
+        return True
+    else:
+        return False
+
+# Send file to one Pi
+def Transfer(localpath, piNum):
+    remotepath = localpath
+    try:
+        print(f'Sending {localpath} to Pi{piNum}.')
+        sftp = ssh[piNum].open_sftp()
+        sftp.put(localpath, remotepath)
+        sftp.close()
+        print('Success.')
+    except:
+        print(f'Failed to send {localpath} to Pi{piNum}.')
+
 # Send file to both Pis
-def Transfer(localpath, remotepath):
+def TransferBoth(localpath):
+    remotepath = localpath
     if ssh[0]:
         print(f'Sending {localpath} to Pi0...')
         try:
@@ -97,19 +182,6 @@ def Transfer(localpath, remotepath):
             print('Success.')
         except:
             print(f'Failed to send {localpath} to Pi1.')
-
-# Test function to test connection to Pis/Roombas
-def Test():
-    print('Running roombaTest.py on both devices...')
-    ssh[0].exec_command('cd Roomba/IoTdevices')
-    ssh[1].exec_command('cd Roomba/IoTdevices')
-    time.sleep(1)
-    ssh[0].exec_command('python3 roombaTest.py')
-    ssh[1].exec_command('python3 roombaTest.py')
-    time.sleep(10)
-    ssh[0].exec_command('cd ~')
-    ssh[1].exec_command('cd ~')
-    print('roombaTest.py complete.')
 
 # Close SSH connections
 def Disconnect():
