@@ -7,12 +7,12 @@ import time
 def Connect():
     print('Creating SSH connections to Pi0 and Pi1...')
 
-    ip0 = '192.168.0.7'
+    ip0 = '192.168.0.5'
     pi0User = 'pi'
     pi0Pw = 'ModelIoT'
     port0 = '/dev/ttyUSB0'
 
-    ip1 = '192.168.0.22'
+    ip1 = '192.168.0.6'
     pi1User = 'pi'
     pi1Pw = 'ModelIoT'
     port1 = '/dev/ttyUSB0'
@@ -20,8 +20,12 @@ def Connect():
     ssh0 = paramiko.SSHClient()
     ssh1 = paramiko.SSHClient()
 
+    global initialized
     global ssh
     global channel
+    initialized = []
+    initialized.append(False)
+    initialized.append(False)
     ssh = []
     channel = []
 
@@ -38,10 +42,9 @@ def Connect():
         print('Establishing SSH connection to Pi0...')
         ssh0.connect(ip0, username=pi0User, password=pi0Pw, look_for_keys=False)
         ssh.append(ssh0)
-        #ssh0.exec_command('echo "Hello world!"')
-        #print('Success.')
         channel0 = ssh0.invoke_shell()
         channel.append(channel0)
+        print('Success.')
     except:
         print('Connection to Pi0 Failed.')
 
@@ -49,10 +52,9 @@ def Connect():
         print('Establishing SSH connection to Pi1...')
         ssh1.connect(ip1, username=pi1User, password=pi1Pw, look_for_keys=False)
         ssh.append(ssh1)
-        #ssh1.exec_command('echo "Hello world!"')
-        #print('Success.')
         channel1 = ssh1.invoke_shell()
         channel.append(channel1)
+        print('Success.')
     except:
         print('Connection to Pi1 Failed.')
 
@@ -85,45 +87,49 @@ def Sensors(arg, piNum): ########### Untested
     out = channel[piNum].recv(9999)
     channel[piNum].send('python3 sensor_data.py ' + arg + '\n')
     while not channel[piNum].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out = channel[piNum].recv(9999)
-    return out.decode("ascii")
+    output = out.decode("ascii")
+    return output
 
 # Sends messages in shell
 def Shell(com, piNum):
-    out = channel[piNum].recv(9999)
+    if not initialized[piNum]:
+        out = channel[piNum].recv(9999)
+        initialized[piNum] = True
     channel[piNum].send(com)
     while not channel[piNum].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out = channel[piNum].recv(9999)
-    
-    return out.decode("ascii")
+    output = out.decode("ascii")
+    return output
 
 # Sends a message to both shells
 def ShellBoth(com):
-    out = []
-    out0 = channel[0].recv(9999)
-    channel[0].send('ls | grep ' + localpath + '\n')
+    if not initialized[0]:
+        out0 = channel[0].recv(9999)
+        initialized[0] = True
+    channel[0].send(com)
     while not channel[0].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out0 = channel[0].recv(9999)
-    out.append(out0.decode("ascii"))
 
-    out1 = channel[1].recv(9999)
-    channel[1].send('ls | grep ' + localpath + '\n')
+    if not initialized[1]:
+        out1 = channel[1].recv(9999)
+        initialized[1] = True
+    channel[1].send(com)
     while not channel[1].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out1 = channel[1].recv(9999)
-    out.append(out1.decode("ascii"))
 
-    return out
+    return out0.decode("ascii"), out1.decode("ascii")
 
 # Check if a Pi has a file
 def Check(localpath, piNum): ########### Untested
     out = channel[piNum].recv(9999)
     channel[piNum].send('ls | grep ' + localpath + '\n')
     while not channel[piNum].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out = channel[piNum].recv(9999)
     if localpath in out.decode("ascii"):
         return True
@@ -135,13 +141,13 @@ def CheckBoth(localpath): ########### Untested
     out0 = channel[0].recv(9999)
     channel[0].send('ls | grep ' + localpath + '\n')
     while not channel[0].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out0 = channel[0].recv(9999)
 
     out1 = channel[1].recv(9999)
     channel[1].send('ls | grep ' + localpath + '\n')
     while not channel[1].recv_ready():
-        time.sleep(3)
+        time.sleep(1)
     out1 = channel[1].recv(9999)
 
     if localpath in out0.decode("ascii") and localpath in out1.decode("ascii"):

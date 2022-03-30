@@ -6,8 +6,8 @@ ssh1 = paramiko.SSHClient()
 ssh0.load_system_host_keys()
 ssh1.load_system_host_keys()
 
-ssh0.connect('192.168.0.7', username='pi', password='ModelIoT')
-ssh1.connect('192.168.0.22', username='pi', password='ModelIoT')
+ssh0.connect('192.168.0.5', username='pi', password='ModelIoT')
+ssh1.connect('192.168.0.6', username='pi', password='ModelIoT')
 
 sftp0 = ssh0.open_sftp()
 sftp1 = ssh1.open_sftp()

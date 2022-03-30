@@ -37,49 +37,65 @@ class MCCD:
         self.mode2 = mode2
     
     async def done(self):
-        piI.TransferBoth('two.txt')
-        time.sleep(2)
-        piI.SendBoth('rm zero.txt')
-        piI.SendBoth('rm one.txt')
-        piI.SendBoth('rm two.txt')
+        print('In done')
+        pi0, pi1 = piI.ShellBoth('\n')
+        print(pi0)
+        print(pi1)
+        while 'Finish' not in pi0 or 'Finish' not in pi1:
+            time.sleep(1)
+            pi0, pi1 = piI.ShellBoth('')
+            print(pi0)
+            print(pi1)
         piI.Disconnect()
 
     async def com_dock(self, piNum):
-        piI.Transfer('one.txt', piNum)
-        time.sleep(2)
+        print('In com_dock')
+        output = piI.Shell('\n', piNum)
+        while 'Dock' not in output:
+            time.sleep(1)
+            output = piI.Shell('')
+            print(output)
         if self.mode1 == 2 and self.mode2 == 2:
             await self.done()
 
     async def dancing1(self):
-        piI.Transfer('zero.txt', 0)
+        print('In dancing1')
+        output = piI.Shell('\n', 0)
+        while 'Dance' not in output:
+            time.sleep(1)
+            output = piI.Shell('', 0)
+            print(output)
         self.mode1 = 2
-        time.sleep(8)
         await self.com_dock(0)
 
     async def dancing2(self):
-        piI.Transfer('zero.txt', 1)
+        print('In dancing2')
+        output = piI.Shell('\n', 1)
+        while 'Dance' not in output:
+            time.sleep(1)
+            output = piI.Shell('', 1)
+            print(output)
         self.mode2 = 2
-        time.sleep(8)
         await self.com_dock(1)
 
     async def com_dance(self):
-        time.sleep(2)
+        print('In com_dance')
         await self.dancing1()
         if self.mode1 == 2:
             await self.dancing2()
 
     async def check_init(self):
+        print('In check_init')
         if self.req1 == 0 and self.mode1 == 1:
             await self.com_dance()
 
     async def com_init(self):
+        print('In com_init')
         global ssh
-        ssh = piI.Connect()
-        if not ssh:
-            print('Error. Exiting.')
-            exit()
-        piI.SendBoth('python3 predefined2.py')
-        time.sleep(1)
+        piI.Connect()
+        pi0, pi1 = piI.ShellBoth('python3 -i predefined0.py\n')
+        print(str(pi0))
+        print(str(pi1))
         self.mode1 = 1
         self.mode2 = 1
         

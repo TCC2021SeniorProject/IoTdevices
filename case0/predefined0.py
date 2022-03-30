@@ -32,13 +32,13 @@ def finish():
 
 
 init()
-print('Done.')
+print('Init')
 input()
 dancing()
-print('Done.')
+print('Dance')
 input()
 seekdock()
-print('Done.')
+print('Dock')
 input()
 finish()
-print('Done.')
+print('Finish')
