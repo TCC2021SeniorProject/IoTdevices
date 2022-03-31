@@ -47,6 +47,7 @@ def Connect():
         print('Success.')
     except:
         print('Connection to Pi0 Failed.')
+        exit()
 
     try:
         print('Establishing SSH connection to Pi1...')
@@ -57,6 +58,7 @@ def Connect():
         print('Success.')
     except:
         print('Connection to Pi1 Failed.')
+        exit()
 
 # Send parameter commands to a Pi/Roomba
 def Send(com, piNum):

@@ -6,9 +6,6 @@ import piInterface as piI
 
 def com_init(self):
     piI.Connect()
-
-
-def com_connect(self):
     pi0, pi1 = piI.ShellBoth('python3 -i predefined1.py\n')
     print(str(pi0) + '\n' + str(pi1))
     while 'connected' not in pi0:
@@ -21,16 +18,16 @@ def com_connect(self):
         print(pi1)
 
 
-def Dancing1(self, piNum):
-    piout = piI.Shell('dance1', piNum)
-    while 'danced1' not in piout:
+def Dancing0(self, piNum):
+    piout = piI.Shell('dance0', piNum)
+    while 'danced0' not in piout:
         time.sleep(1)
         piout = piI.Shell('', piNum)
 
 
-def Dancing2(self, piNum):
-    piout = piI.Shell('dance2', piNum)
-    while 'danced2' not in piout:
+def Dancing1(self, piNum):
+    piout = piI.Shell('dance1', piNum)
+    while 'danced1' not in piout:
         time.sleep(1)
         piout = piI.Shell('', piNum)
 

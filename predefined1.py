@@ -14,7 +14,7 @@ def connect():
     bot.safe()
 
 
-def dance1():
+def dance0():
     bot.drive_direct(-190, -190)
     time.sleep(1)
     bot.drive_direct(-420, 420)
@@ -22,7 +22,7 @@ def dance1():
     bot.drive_stop()
 
 
-def dance2():
+def dance1():
     bot.drive_direct(-190, -190)
     time.sleep(1)
     bot.drive_direct(420, -420)
@@ -47,13 +47,13 @@ print('connected')
 
 command = ''
 while command != 'disconnect':
-    if command == 'dance1':
+    if command == 'dance0':
+        dance0()
+        print('danced0')
+
+    elif command == 'dance1':
         dance1()
         print('danced1')
-
-    elif command == 'dance2':
-        dance2()
-        print('danced2')
 
     elif command == 'dock':
         dock()
