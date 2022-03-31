@@ -64,6 +64,8 @@ class MCCD:
         await self.com_init()
 
 class RasPi1:
+    piNum = 0
+
     def __init__(self, connection, initalize, dance, dock, disconnect, request, ):
         self.connection = connection
         self.initalize = initalize
@@ -108,6 +110,8 @@ class RasPi1:
         await self.Initalized()
 
 class RasPi2:
+    piNum = 1
+    
     def __init__(self, connection, initalize, dance, dock, disconnect, request, ):
         self.connection = connection
         self.initalize = initalize
