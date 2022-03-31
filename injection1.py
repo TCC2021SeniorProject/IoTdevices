@@ -35,14 +35,14 @@ def Dancing2(self, piNum):
         piout = piI.Shell('', piNum)
 
 
-def com_dock(self, piNum): # or "Docking()" ???
+def Docking(self, piNum):
     piout = piI.Shell('dock', piNum)
     while 'docked' not in piout:
         time.sleep(1)
         piout = piI.Shell('', piNum)
 
 
-def com_disconnect(self): # or "Disconnecting()" ???
+def com_disconnect(self):
     piout = piI.ShellBoth('disconnect')
     while 'disconnected' not in piout:
         time.sleep(1)
