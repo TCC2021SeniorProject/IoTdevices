@@ -18,31 +18,34 @@ def com_init(self):
         print(pi1)
 
 
-def Dancing0(self, piNum):
-    piout = piI.Shell('dance0', piNum)
+def Dancing0(self):
+    piout = piI.Shell('dance0', self.piNum)
     while 'danced0' not in piout:
         time.sleep(1)
-        piout = piI.Shell('', piNum)
+        piout = piI.Shell('', self.piNum)
 
 
-def Dancing1(self, piNum):
-    piout = piI.Shell('dance1', piNum)
+def Dancing1(self):
+    piout = piI.Shell('dance1', self.piNum)
     while 'danced1' not in piout:
         time.sleep(1)
-        piout = piI.Shell('', piNum)
+        piout = piI.Shell('', self.piNum)
 
 
-def Docking(self, piNum):
-    piout = piI.Shell('dock', piNum)
+def Docking(self):
+    piout = piI.Shell('dock', self.piNum)
     while 'docked' not in piout:
         time.sleep(1)
-        piout = piI.Shell('', piNum)
+        piout = piI.Shell('', self.piNum)
 
 
 def com_disconnect(self):
-    piout = piI.ShellBoth('disconnect')
-    while 'disconnected' not in piout:
+    pi0, pi1 = piI.ShellBoth('disconnect')
+    while 'disconnected' not in pi0:
         time.sleep(1)
-        piout = piI.ShellBoth('')
+        pi0 = piI.Shell('', 0)
+    while 'disconnected' not in pi1:
+        time.sleep(1)
+        pi1 = piI.Shell('', 1)
     piI.Disconnect()
     time.sleep(3)

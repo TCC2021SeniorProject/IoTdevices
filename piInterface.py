@@ -44,6 +44,7 @@ def Connect():
         ssh.append(ssh0)
         channel0 = ssh0.invoke_shell()
         channel.append(channel0)
+        #out = channel[0].recv(9999)
         print('Success.')
     except:
         print('Connection to Pi0 Failed.')
@@ -55,6 +56,7 @@ def Connect():
         ssh.append(ssh1)
         channel1 = ssh1.invoke_shell()
         channel.append(channel1)
+        #out = channel[1].recv(9999)
         print('Success.')
     except:
         print('Connection to Pi1 Failed.')
@@ -96,6 +98,8 @@ def Sensors(arg, piNum): ########### Untested
 
 # Sends messages in shell
 def Shell(com, piNum):
+    if len(com) > 0 and com[-1] != '\n':
+        com = com + '\n'
     if not initialized[piNum]:
         out = channel[piNum].recv(9999)
         initialized[piNum] = True
@@ -108,6 +112,8 @@ def Shell(com, piNum):
 
 # Sends a message to both shells
 def ShellBoth(com):
+    if len(com) > 0 and com[-1] != '\n':
+        com = com + '\n'
     if not initialized[0]:
         out0 = channel[0].recv(9999)
         initialized[0] = True

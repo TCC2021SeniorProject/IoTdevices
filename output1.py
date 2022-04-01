@@ -54,7 +54,7 @@ class RasPi1:
     async def Disconnecting(self):
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
     async def Docking(self):
         self.request = 3
@@ -67,7 +67,7 @@ class RasPi1:
         
         await self.Docking()
 
-    async def Initalized(self):
+    async def Initialized(self):
         self.request = 1
         
         MCCD.com_init()
@@ -76,7 +76,7 @@ class RasPi1:
     async def Idle(self):
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
 class RasPi0:
     def __init__(self, connection, initalize, dance, dock, disconnect, request, ):
@@ -91,7 +91,7 @@ class RasPi0:
     async def Disconnecting(self):
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
     async def Docking(self):
         self.request = 3
@@ -104,7 +104,7 @@ class RasPi0:
         
         await self.Docking()
 
-    async def Initalized(self):
+    async def Initialized(self):
         self.request = 1
         
         MCCD.com_init()
@@ -113,7 +113,7 @@ class RasPi0:
     async def Idle(self):
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
 loop = asyncio.get_event_loop()
 Laptop = MCCD(connection, initalize, dance, dock, disconnect, request)

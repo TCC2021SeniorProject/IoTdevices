@@ -32,10 +32,20 @@ def dance1():
 
 def dock():
     bot.seek_dock()
-    sensors = bot.get_sensors()
-    while sensors.charger_state == 0:
+    sensors0 = bot.get_sensors()
+    time.sleep(.3)
+    sensors1 = bot.get_sensors()
+    time.sleep(.3)
+    sensors2 = bot.get_sensors()
+    time.sleep(.3)
+    while sensors0.charger_state == 0 and sensors1.charger_state == 0 and sensors2.charger_state == 0:
         time.sleep(1)
-        sensors = bot.get_sensors()
+        sensors0 = bot.get_sensors()
+        time.sleep(.3)
+        sensors1 = bot.get_sensors()
+        time.sleep(.3)
+        sensors2 = bot.get_sensors()
+        time.sleep(.3)
 
 
 def disconnect():

@@ -30,8 +30,9 @@ class MCCD:
         piI.Disconnect()
         time.sleep(3)
         if self.request == 3:
-            Pi0.Disconnecting()
-            Pi1.Disconnecting()
+            pi0Dis = loop.create_task(Pi0.Disconnecting())
+            pi1Dis = loop.create_task(Pi1.Disconnecting())
+            await asyncio.wait([pi0Dis, pi1Dis])
             await self.com_init()
 
     async def com_dock(self):
@@ -40,8 +41,9 @@ class MCCD:
 
     async def com_dance(self):
         if self.request == 1:
-            Pi0.Dancing0()
-            Pi1.Dancing1()
+            pi0Dan = loop.create_task(Pi0.Dancing0())
+            pi1Dan = loop.create_task(Pi1.Dancing1())
+            await asyncio.wait([pi0Dan, pi1Dan])
             await self.com_dock()
 
     async def com_init(self):
@@ -60,16 +62,11 @@ class MCCD:
             await self.com_dance()
 
     async def com_connect(self):
-        #Pi0.Idle()
-        Pi1.Idle()
+        pi0Idl = loop.create_task(Pi0.Idle())
+        pi1Idl = loop.create_task(Pi1.Idle())
+        await asyncio.wait([pi0Idl, pi1Idl])
         await self.com_init()
     
-    def between_idle(self):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(Pi0.Idle())
-        loop.close()
-
 class RasPi0:
     def __init__(self, connection, initalize, dance, dock, disconnect, request, ):
         self.connection = connection
@@ -81,9 +78,10 @@ class RasPi0:
         self.piNum = 0
 
     async def Disconnecting(self):
+        await asyncio.sleep(.01)
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
     async def Docking(self):
         piout = piI.Shell('dock', self.piNum)
@@ -92,7 +90,7 @@ class RasPi0:
             piout = piI.Shell('', self.piNum)
         self.request = 3
         
-        Laptop.com_dock()
+        await Laptop.com_dock()
         await self.Disconnecting()
 
     async def Dancing0(self):
@@ -104,17 +102,17 @@ class RasPi0:
         
         await self.Docking()
 
-    async def Initalized(self):
+    async def Initialized(self):
         self.request = 1
         
-        Laptop.com_init()
+        await Laptop.com_init()
         await self.Dancing0()
 
     async def Idle(self):
-        print('Pi0 Idle')
+        await asyncio.sleep(.01)
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
 class RasPi1:
     def __init__(self, connection, initalize, dance, dock, disconnect, request, ):
@@ -127,9 +125,10 @@ class RasPi1:
         self.piNum = 1
 
     async def Disconnecting(self):
+        await asyncio.sleep(.01)
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
     async def Docking(self):
         piout = piI.Shell('dock', self.piNum)
@@ -138,7 +137,7 @@ class RasPi1:
             piout = piI.Shell('', self.piNum)
         self.request = 3
         
-        Laptop.com_dock()
+        await Laptop.com_dock()
         await self.Disconnecting()
 
     async def Dancing1(self):
@@ -150,23 +149,23 @@ class RasPi1:
         
         await self.Docking()
 
-    async def Initalized(self):
+    async def Initialized(self):
         self.request = 1
         
-        Laptop.com_init()
+        await Laptop.com_init()
         await self.Dancing1()
 
     async def Idle(self):
+        await asyncio.sleep(.01)
         self.request = 0
         
-        await self.Initalized()
+        await self.Initialized()
 
 loop = asyncio.get_event_loop()
 Pi0 = RasPi0(connection, initalize, dance, dock, disconnect, request)
 Pi1 = RasPi1(connection, initalize, dance, dock, disconnect, request)
 Laptop = MCCD(connection, initalize, dance, dock, disconnect, request, Pi0, Pi1, )
-_thread = threading.Thread(target=Laptop.between_idle, args=(''))
-_thread.start()
-#loop.run_until_complete(Laptop.com_connect())
-#loop.run_until_complete(Pi0.Idle())
-#loop.run_until_complete(Pi1.Idle())
+loop.run_until_complete(Laptop.com_connect())
+loop.run_until_complete(Pi0.Idle())
+loop.run_until_complete(Pi1.Idle())
+loop.close()
