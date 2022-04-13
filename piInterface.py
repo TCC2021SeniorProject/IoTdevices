@@ -91,7 +91,7 @@ def Sensors(arg, piNum): ########### Untested
     out = channel[piNum].recv(9999)
     channel[piNum].send('python3 sensor_data.py ' + arg + '\n')
     while not channel[piNum].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out = channel[piNum].recv(9999)
     output = out.decode("ascii")
     return output
@@ -105,7 +105,7 @@ def Shell(com, piNum):
         initialized[piNum] = True
     channel[piNum].send(com)
     while not channel[piNum].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out = channel[piNum].recv(9999)
     output = out.decode("ascii")
     return output
@@ -119,7 +119,7 @@ def ShellBoth(com):
         initialized[0] = True
     channel[0].send(com)
     while not channel[0].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out0 = channel[0].recv(9999)
 
     if not initialized[1]:
@@ -127,7 +127,7 @@ def ShellBoth(com):
         initialized[1] = True
     channel[1].send(com)
     while not channel[1].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out1 = channel[1].recv(9999)
 
     return out0.decode("ascii"), out1.decode("ascii")
@@ -137,7 +137,7 @@ def Check(localpath, piNum): ########### Untested
     out = channel[piNum].recv(9999)
     channel[piNum].send('ls | grep ' + localpath + '\n')
     while not channel[piNum].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out = channel[piNum].recv(9999)
     if localpath in out.decode("ascii"):
         return True
@@ -149,13 +149,13 @@ def CheckBoth(localpath): ########### Untested
     out0 = channel[0].recv(9999)
     channel[0].send('ls | grep ' + localpath + '\n')
     while not channel[0].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out0 = channel[0].recv(9999)
 
     out1 = channel[1].recv(9999)
     channel[1].send('ls | grep ' + localpath + '\n')
     while not channel[1].recv_ready():
-        time.sleep(1)
+        time.sleep(.1)
     out1 = channel[1].recv(9999)
 
     if localpath in out0.decode("ascii") and localpath in out1.decode("ascii"):
