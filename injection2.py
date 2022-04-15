@@ -1,5 +1,6 @@
 import time
 import piInterface as piI
+import asyncio
 
 
 def Com_initialized():
@@ -16,126 +17,137 @@ def Com_initialized():
         print(pi1)
 
 
-def Undock():
+async def Undock():
     out = piI.Shell('undock\n', self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'undocked' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Turning1():
+async def Turning1():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
         out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'rotated' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Moving1():
+async def Moving1():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
         out = piI.Shell('move ' + str(rp1Distance), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'moved' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Turning2():
+async def Turning2():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
         out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'rotated' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Moving2():
+async def Moving2():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
         out = piI.Shell('move ' + str(rp1Distance), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'moved' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Turning3():
+async def Turning3():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
         out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'rotated' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Moving3():
+async def Moving3():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
         out = piI.Shell('move ' + str(rp1Distance), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'moved' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Turning4():
+async def Turning4():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
         out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'rotated' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Moving4():
+async def Moving4():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
         out = piI.Shell('move ' + str(rp1Distance), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'moved' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Turning5():
+async def Turning5():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
         out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'rotated' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out)
 
 
-def Docking():
+async def Docking():
     out = piI.Shell('dock', self.piNum)
     print(out)
+    await asyncio.sleep(0.01)
     while 'docked' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)

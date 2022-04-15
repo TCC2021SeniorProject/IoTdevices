@@ -50,7 +50,7 @@ def rotate(angle):
     else:
         angle = -angle
         bot.drive_direct(-150, 150)
-    time.sleep(angle/70)
+    time.sleep(angle/69)
     bot.drive_stop()
 
 def dock():
