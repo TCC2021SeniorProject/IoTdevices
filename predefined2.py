@@ -11,36 +11,17 @@ def connect():
     bot.safe()
 
 
-# def undock():
-#     bot.drive_distance(-.15, 200, True)
-#     sensors = bot.get_sensors()
-#     while sensors.velocity > 5:
-#         time.sleep(.1)
-#         sensors = bot.get_sensors()
-
 def undock():
     bot.drive_direct(-200, -200)
-    time.sleep(.7)
+    time.sleep(1)
     bot.drive_stop()
 
-# def move(distance):
-#     bot.drive_distance(distance, 300, True)
-#     wait = distance * 2
-#     if wait < 0:
-#         wait = -wait
-#     time.sleep(wait)
 
 def move(distance):
-    bot.drive_direct(300, 300)
-    time.sleep(distance * 2)
+    bot.drive_direct(225, 225)
+    time.sleep(distance * 3)
     bot.drive_stop()
 
-# def rotate(angle):
-#     bot.turn_angle(angle, 350)
-#     wait = angle/45
-#     if wait < 0:
-#         wait = -wait
-#     time.sleep(wait)
 
 def rotate(angle):
     if angle > 0:
