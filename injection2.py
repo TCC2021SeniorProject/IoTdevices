@@ -1,6 +1,5 @@
 import time
 import piInterface as piI
-import asyncio
 
 
 def Com_initialized():
@@ -17,7 +16,7 @@ def Com_initialized():
         print(pi1)
 
 
-async def Undock():
+def Undock():
     out = piI.Shell('undock\n', self.piNum)
     print(out)
     await asyncio.sleep(0.01)
@@ -27,7 +26,7 @@ async def Undock():
         print(out)
 
 
-async def Turning1():
+def Turning1():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
@@ -40,7 +39,7 @@ async def Turning1():
         print(out)
 
 
-async def Moving1():
+def Moving1():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
@@ -53,7 +52,7 @@ async def Moving1():
         print(out)
 
 
-async def Turning2():
+def Turning2():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
@@ -66,7 +65,7 @@ async def Turning2():
         print(out)
 
 
-async def Moving2():
+def Moving2():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
@@ -79,7 +78,7 @@ async def Moving2():
         print(out)
 
 
-async def Turning3():
+def Turning3():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
@@ -92,7 +91,7 @@ async def Turning3():
         print(out)
 
 
-async def Moving3():
+def Moving3():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
@@ -105,7 +104,7 @@ async def Moving3():
         print(out)
 
 
-async def Turning4():
+def Turning4():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
@@ -118,7 +117,7 @@ async def Turning4():
         print(out)
 
 
-async def Moving4():
+def Moving4():
     if self.piNum == 0:
         out = piI.Shell('move ' + str(rp0Distance), self.piNum)
     else:
@@ -131,7 +130,7 @@ async def Moving4():
         print(out)
 
 
-async def Turning5():
+def Turning5():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
     else:
@@ -144,7 +143,7 @@ async def Turning5():
         print(out)
 
 
-async def Docking():
+def Docking():
     out = piI.Shell('dock', self.piNum)
     print(out)
     await asyncio.sleep(0.01)
