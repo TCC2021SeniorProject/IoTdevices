@@ -1,4 +1,5 @@
 import paramiko
+import sys
 
 ssh0 = paramiko.SSHClient()
 ssh1 = paramiko.SSHClient()
@@ -12,12 +13,11 @@ ssh1.connect('192.168.0.6', username='pi', password='ModelIoT')
 sftp0 = ssh0.open_sftp()
 sftp1 = ssh1.open_sftp()
 
-localpath = input('Enter the path for the local file: ')
-check = input('Would you like the file to have the same name? (Y/N) ')
-if check == 'y' or 'Y':
-    remotepath = localpath
+if len(sys.argv) > 1:
+    localpath = sys.argv[1]
 else:
-    remotepath = input('Enter the path for the new remote file: ')
+    localpath = input('Enter the path for the local file: ')
+remotepath = localpath
 
 sftp0.put(localpath, remotepath)
 sftp1.put(localpath, remotepath)

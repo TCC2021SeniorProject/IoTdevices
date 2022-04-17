@@ -1,8 +1,18 @@
 import asyncio
 import time
 import piInterface as piI
+import PyLidar3
 
+numLoops = 0
 initialized = None #Channel variable
+undock = None #Channel variable
+dock = None #Channel variable
+scan = None #Channel variable
+turn = None #Channel variable
+map = None #Channel variable
+finished = None #Channel variable
+move = None #Channel variable
+disconnect = None #Channel variable
 rp0On = False
 rp1On = False
 rp0State = 0
@@ -22,9 +32,9 @@ class CentralController:
 	def __init__(self, ):
 		global Pi0
 		global Pi1
-		self.numLoops = 0
+		pass
 
-	async def Com_disconnect(self):
+	async def Com_finished(self):
 		pi0, pi1 = piI.ShellBoth('disconnect')
 		while 'disconnected' not in pi0:
 			time.sleep(.1)
@@ -34,141 +44,148 @@ class CentralController:
 			pi1 = piI.Shell('', 1)
 		piI.Disconnect()
 
-		if rp0State and rp1State == 15:
-			self.numLoops = numLoops +1
-			await asyncio.sleep(0.01)
-			await self.Com_undock()
+		pass
+
+	async def Com_disconnect(self):
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Finished(), Pi1.Finished(), )
+		await self.Com_finished()
+		global numLoops
+		numLoops = numLoops +1
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Disconnecting(), Pi1.Disconnecting(), )
+		await self.Com_undock()
 
 	async def Com_dock(self):
-		if rp0State and rp1State == 14:
-			await asyncio.sleep(0.01)
-			await self.Com_disconnect()
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Docking(), Pi1.Docking(), )
+		await self.Com_disconnect()
 
 	async def Com_turn5(self):
-		if rp0State and rp1State == 13:
-			global rp0Angle
-			rp0Angle = -90.0
-			global rp1Angle
-			rp1Angle = 90.0
-			await asyncio.sleep(0.01)
-			await self.Com_dock()
+		global rp0Angle
+		rp0Angle = -90.0
+		global rp1Angle
+		rp1Angle = 90.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Turning(), Pi1.Turning(), )
+		await self.Com_dock()
 
 	async def Com_map2(self):
-		if rp0State and rp1State == 12:
-			global map2Rp0
-			map2Rp0 = numLoops +1
-			global map2Rp1
-			map2Rp1 = numLoops +1
-			await asyncio.sleep(0.01)
-			await self.Com_turn5()
+		global map2Rp0
+		map2Rp0 = numLoops +1
+		global map2Rp1
+		map2Rp1 = numLoops +1
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Mapping(), Pi1.Mapping(), )
+		await self.Com_turn5()
 
 	async def Com_scan2(self):
-		if rp0State and rp1State == 11:
-			global rp0ScanTime
-			rp0ScanTime = 2.0
-			global rp1ScanTime
-			rp1ScanTime = 2.0
-			await asyncio.sleep(0.01)
-			await self.Com_map2()
+		global rp0ScanTime
+		rp0ScanTime = 2.0
+		global rp1ScanTime
+		rp1ScanTime = 2.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Scanning(), Pi1.Scanning(), )
+		await self.Com_map2()
 
 	async def Com_move4(self):
-		if rp0State and rp1State == 10:
-			global rp0Distance
-			rp0Distance = 1.0
-			global rp1Distance
-			rp1Distance = 1.0
-			await asyncio.sleep(0.01)
-			await self.Com_scan2()
+		global rp0Distance
+		rp0Distance = 1.0
+		global rp1Distance
+		rp1Distance = 1.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Moving(), Pi1.Moving(), )
+		await self.Com_scan2()
 
 	async def Com_turn4(self):
-		if rp0State and rp1State == 9:
-			global rp0Angle
-			rp0Angle = 90.0
-			global rp1Angle
-			rp1Angle = -90.0
-			await asyncio.sleep(0.01)
-			await self.Com_move4()
+		global rp0Angle
+		rp0Angle = 90.0
+		global rp1Angle
+		rp1Angle = -90.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Turning(), Pi1.Turning(), )
+		await self.Com_move4()
 
 	async def Com_move3(self):
-		if rp0State and rp1State == 8:
-			global rp0Distance
-			rp0Distance = 1.0
-			global rp1Distance
-			rp1Distance = 1.0
-			await asyncio.sleep(0.01)
-			await self.Com_turn4()
+		global rp0Distance
+		rp0Distance = 1.0
+		global rp1Distance
+		rp1Distance = 1.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Moving(), Pi1.Moving(), )
+		await self.Com_turn4()
 
 	async def Com_map1(self):
-		if rp0State and rp1State == 7:
-			global map1Rp0
-			map1Rp0 = numLoops +1
-			global map1Rp1
-			map1Rp1 = numLoops +1
-			await asyncio.sleep(0.01)
-			await self.Com_move3()
+		global map1Rp0
+		map1Rp0 = numLoops +1
+		global map1Rp1
+		map1Rp1 = numLoops +1
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Mapping(), Pi1.Mapping(), )
+		await self.Com_move3()
 
 	async def Com_scan1(self):
-		if rp0State and rp1State == 6:
-			global rp0ScanTime
-			rp0ScanTime = 1.0
-			global rp1ScanTime
-			rp1ScanTime = 1.0
-			await asyncio.sleep(0.01)
-			await self.Com_map1()
+		global rp0ScanTime
+		rp0ScanTime = 1.0
+		global rp1ScanTime
+		rp1ScanTime = 1.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Scanning(), Pi1.Scanning(), )
+		await self.Com_map1()
 
 	async def Com_turn3(self):
-		if rp0State and rp1State == 5:
-			global rp0Angle
-			rp0Angle = 90.0
-			global rp1Angle
-			rp1Angle = -90.0
-			await asyncio.sleep(0.01)
-			await self.Com_scan1()
+		global rp0Angle
+		rp0Angle = 90.0
+		global rp1Angle
+		rp1Angle = -90.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Turning(), Pi1.Turning(), )
+		await self.Com_scan1()
 
 	async def Com_move2(self):
-		if rp0State and rp1State == 4:
-			global rp0Distance
-			rp0Distance = 1.0
-			global rp1Distance
-			rp1Distance = 1.0
-			await asyncio.sleep(0.01)
-			await self.Com_turn3()
+		global rp0Distance
+		rp0Distance = 1.0
+		global rp1Distance
+		rp1Distance = 1.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Moving(), Pi1.Moving(), )
+		await self.Com_turn3()
 
 	async def Com_turn2(self):
-		if rp0State and rp1State == 3:
-			global rp0Angle
-			rp0Angle = 90.0
-			global rp1Angle
-			rp1Angle = -90.0
-			await asyncio.sleep(0.01)
-			await self.Com_move2()
+		global rp0Angle
+		rp0Angle = 90.0
+		global rp1Angle
+		rp1Angle = -90.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Turning(), Pi1.Turning(), )
+		await self.Com_move2()
 
 	async def Com_move1(self):
-		if rp0State and rp1State == 2:
-			global rp0Distance
-			rp0Distance = 1.0
-			global rp1Distance
-			rp1Distance = 1.0
-			await asyncio.sleep(0.01)
-			await self.Com_turn2()
+		global rp0Distance
+		rp0Distance = 1.0
+		global rp1Distance
+		rp1Distance = 1.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Moving(), Pi1.Moving(), )
+		await self.Com_turn2()
 
 	async def Com_turn1(self):
-		if rp0State and rp1State == 1:
-			global rp0Angle
-			rp0Angle = 180.0
-			global rp1Angle
-			rp1Angle = -180.0
-			await asyncio.sleep(0.01)
-			await self.Com_move1()
+		global rp0Angle
+		rp0Angle = 180.0
+		global rp1Angle
+		rp1Angle = -180.0
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Turning(), Pi1.Turning(), )
+		await self.Com_move1()
 
 	async def Com_undock(self):
-		if rp0On and rp1On == True:
-			global rp0Distance
-			rp0Distance = -0.1
-			global rp1Distance
-			rp1Distance = -0.1
-			await asyncio.sleep(0.01)
-			await self.Com_turn1()
+		global rp0Distance
+		rp0Distance = -0.1
+		global rp1Distance
+		rp1Distance = -0.1
+		await asyncio.sleep(0.01)
+		await asyncio.gather(Pi0.Undock(), Pi1.Undock(), )
+		await self.Com_turn1()
 
 	async def Com_initialized(self):
 		piI.Connect()
@@ -184,7 +201,7 @@ class CentralController:
 			print(pi1)
 
 		await asyncio.sleep(0.01)
-		await asyncio.gather(Pi0.Initalized(), Pi1.Initalized())
+		await asyncio.gather(Pi0.Initalized(), Pi1.Initalized(), )
 		await self.Com_undock()
 
 class RaspberryPi0:
@@ -193,107 +210,114 @@ class RaspberryPi0:
 		global Pi1
 		self.piNum = 0
 
-	async def Disconnecting(self):
-		global rp0State
-		rp0State = 0
-		await asyncio.sleep(0.01)
-		await self.Undock()
+	async def Empty1(self):
+		pass
 
-	async def Docking(self):
-		global rp0State
-		rp0State = 15
+	async def Finished(self):
 		await asyncio.sleep(0.01)
-		await self.Disconnecting()
+		await self.Empty1()
 
-	async def Turning5(self):
-		global rp0State
-		rp0State = 14
-		await asyncio.sleep(0.01)
-		await self.Docking()
+	async def Empty9(self):
+		pass
 
-	async def Mapping2(self):
-		global rp0State
-		rp0State = 13
+	async def Mapping(self):
 		await asyncio.sleep(0.01)
-		await self.Turning5()
+		await self.Empty9()
 
-	async def Scanning2(self):
-		global rp0State
-		rp0State = 12
-		await asyncio.sleep(0.01)
-		await self.Mapping2()
-
-	async def Moving4(self):
-		global rp0State
-		rp0State = 11
-		await asyncio.sleep(0.01)
-		await self.Scanning2()
-
-	async def Turning4(self):
-		global rp0State
-		rp0State = 10
-		await asyncio.sleep(0.01)
-		await self.Moving4()
-
-	async def Moving3(self):
-		global rp0State
-		rp0State = 9
-		await asyncio.sleep(0.01)
-		await self.Turning4()
-
-	async def Mapping1(self):
-		global rp0State
-		rp0State = 8
-		await asyncio.sleep(0.01)
-		await self.Moving3()
-
-	async def Scanning1(self):
-		global rp0State
-		rp0State = 7
-		await asyncio.sleep(0.01)
-		await self.Mapping1()
-
-	async def Turning3(self):
-		global rp0State
-		rp0State = 6
-		await asyncio.sleep(0.01)
-		await self.Scanning1()
-
-	async def Moving2(self):
-		global rp0State
-		rp0State = 5
-		await asyncio.sleep(0.01)
-		await self.Turning3()
-
-	async def Turning2(self):
-		global rp0State
-		rp0State = 4
-		await asyncio.sleep(0.01)
-		await self.Moving2()
-
-	async def Moving1(self):
-		global rp0State
-		rp0State = 3
-		await asyncio.sleep(0.01)
-		await self.Turning2()
-
-	async def Turning1(self):
-		global rp0State
-		rp0State = 2
-		await asyncio.sleep(0.01)
-		await self.Moving1()
+	async def Empty4(self):
+		pass
 
 	async def Undock(self):
-		global rp0State
-		rp0State = 1
+		out = piI.Shell('undock\n', self.piNum)
+		print(out)
 		await asyncio.sleep(0.01)
-		await self.Turning1()
+		while 'undocked' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty4()
+
+	async def Empty5(self):
+		pass
+
+	async def Turning(self):
+		if self.piNum == 0:
+			out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
+		else:
+			out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'rotated' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty5()
+
+	async def Empty3(self):
+		pass
+
+	async def Moving(self):
+		if self.piNum == 0:
+			out = piI.Shell('move ' + str(rp0Distance), self.piNum)
+		else:
+			out = piI.Shell('move ' + str(rp1Distance), self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'moved' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty3()
+
+	async def Empty8(self):
+		pass
+
+	async def Scanning(self):
+		out = piI.Shell('scan\n', self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'scanned' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty8()
+
+	async def Empty7(self):
+		pass
+
+	async def Disconnecting(self):
+		await asyncio.sleep(0.01)
+		await self.Empty7()
+
+	async def Empty6(self):
+		pass
+
+	async def Docking(self):
+		out = piI.Shell('dock', self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'docked' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty6()
+
+	async def Empty2(self):
+		pass
 
 	async def Initalized(self):
-		global rp0On
-		rp0On = True
 		await asyncio.sleep(0.01)
-		await self.Undock()
+		await self.Empty2()
 
 class RaspberryPi1:
 	def __init__(self, ):
@@ -301,107 +325,114 @@ class RaspberryPi1:
 		global Pi0
 		self.piNum = 1
 
-	async def Disconnecting(self):
-		global rp1State
-		rp1State = 0
-		await asyncio.sleep(0.01)
-		await self.Undock()
+	async def Empty1(self):
+		pass
 
-	async def Docking(self):
-		global rp1State
-		rp1State = 15
+	async def Finished(self):
 		await asyncio.sleep(0.01)
-		await self.Disconnecting()
+		await self.Empty1()
 
-	async def Turning5(self):
-		global rp1State
-		rp1State = 14
-		await asyncio.sleep(0.01)
-		await self.Docking()
-
-	async def Mapping2(self):
-		global rp1State
-		rp1State = 13
-		await asyncio.sleep(0.01)
-		await self.Turning5()
-
-	async def Scanning2(self):
-		global rp1State
-		rp1State = 12
-		await asyncio.sleep(0.01)
-		await self.Mapping2()
-
-	async def Moving4(self):
-		global rp1State
-		rp1State = 11
-		await asyncio.sleep(0.01)
-		await self.Scanning2()
-
-	async def Turning4(self):
-		global rp1State
-		rp1State = 10
-		await asyncio.sleep(0.01)
-		await self.Moving4()
-
-	async def Moving3(self):
-		global rp1State
-		rp1State = 9
-		await asyncio.sleep(0.01)
-		await self.Turning4()
-
-	async def Mapping1(self):
-		global rp1State
-		rp1State = 8
-		await asyncio.sleep(0.01)
-		await self.Moving3()
-
-	async def Scanning1(self):
-		global rp1State
-		rp1State = 7
-		await asyncio.sleep(0.01)
-		await self.Mapping1()
-
-	async def Turning3(self):
-		global rp1State
-		rp1State = 6
-		await asyncio.sleep(0.01)
-		await self.Scanning1()
-
-	async def Moving2(self):
-		global rp1State
-		rp1State = 5
-		await asyncio.sleep(0.01)
-		await self.Turning3()
-
-	async def Turning2(self):
-		global rp1State
-		rp1State = 4
-		await asyncio.sleep(0.01)
-		await self.Moving2()
-
-	async def Moving1(self):
-		global rp1State
-		rp1State = 3
-		await asyncio.sleep(0.01)
-		await self.Turning2()
-
-	async def Turning1(self):
-		global rp1State
-		rp1State = 2
-		await asyncio.sleep(0.01)
-		await self.Moving1()
-
-	async def Undock(self):
-		global rp1State
-		rp1State = 1
-		await asyncio.sleep(0.01)
-		await self.Turning1()
+	async def Empty2(self):
+		pass
 
 	async def Initalized(self):
-		global rp1On
-		rp1On = True
 		await asyncio.sleep(0.01)
-		await self.Undock()
+		await self.Empty2()
+
+	async def Empty3(self):
+		pass
+
+	async def Moving(self):
+		if self.piNum == 0:
+			out = piI.Shell('move ' + str(rp0Distance), self.piNum)
+		else:
+			out = piI.Shell('move ' + str(rp1Distance), self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'moved' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty3()
+
+	async def Empty4(self):
+		pass
+
+	async def Undock(self):
+		out = piI.Shell('undock\n', self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'undocked' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty4()
+
+	async def Empty7(self):
+		pass
+
+	async def Disconnecting(self):
+		await asyncio.sleep(0.01)
+		await self.Empty7()
+
+	async def Empty6(self):
+		pass
+
+	async def Docking(self):
+		out = piI.Shell('dock', self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'docked' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty6()
+
+	async def Empty9(self):
+		pass
+
+	async def Mapping(self):
+		await asyncio.sleep(0.01)
+		await self.Empty9()
+
+	async def Empty8(self):
+		pass
+
+	async def Scanning(self):
+		out = piI.Shell('scan\n', self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'scanned' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty8()
+
+	async def Empty5(self):
+		pass
+
+	async def Turning(self):
+		if self.piNum == 0:
+			out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
+		else:
+			out = piI.Shell('rotate ' + str(rp1Angle), self.piNum)
+		print(out)
+		await asyncio.sleep(0.01)
+		while 'rotated' not in out:
+			time.sleep(.1)
+			out = piI.Shell('', self.piNum)
+			print(out)
+
+		await asyncio.sleep(0.01)
+		await self.Empty5()
 
 loop = asyncio.get_event_loop()
 Pi0 = RaspberryPi0()

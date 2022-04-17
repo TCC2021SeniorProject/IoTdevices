@@ -39,12 +39,18 @@ def move(distance):
 
 def rotate(angle):
     if angle > 0:
-        bot.drive_direct(-150, 150)
+        if angle > 45:
+            bot.drive_direct(-150, 150)
+        else:
+            bot.drive_direct(-160, 160)
     elif angle == 0:
         bot.drive_direct(0, 0)
     else:
         angle = -angle
-        bot.drive_direct(150, -150)
+        if angle > 45:
+            bot.drive_direct(150, -150)
+        else:
+            bot.drive_direct(160, -160)
     time.sleep(angle/69)
     bot.drive_stop()
 
