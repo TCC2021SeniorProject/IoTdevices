@@ -44,7 +44,6 @@ def Connect():
         ssh.append(ssh0)
         channel0 = ssh0.invoke_shell()
         channel.append(channel0)
-        #out = channel[0].recv(9999)
         print('Success.')
     except:
         print('Connection to Pi0 Failed.')
@@ -56,7 +55,6 @@ def Connect():
         ssh.append(ssh1)
         channel1 = ssh1.invoke_shell()
         channel.append(channel1)
-        #out = channel[1].recv(9999)
         print('Success.')
     except:
         print('Connection to Pi1 Failed.')
@@ -85,16 +83,6 @@ def SendBoth(com):
         print(f'Command sent to Pi1.')
     except:
         print(f'Command failed to send to Pi1.')
-
-# Retrieve sensor data from Roombas
-def Sensors(arg, piNum): ########### Untested
-    out = channel[piNum].recv(9999)
-    channel[piNum].send('python3 sensor_data.py ' + arg + '\n')
-    while not channel[piNum].recv_ready():
-        time.sleep(.1)
-    out = channel[piNum].recv(9999)
-    output = out.decode("ascii")
-    return output
 
 # Sends messages in shell
 def Shell(com, piNum):
@@ -133,35 +121,85 @@ def ShellBoth(com):
     return out0.decode("ascii"), out1.decode("ascii")
 
 # Check if a Pi has a file
-def Check(localpath, piNum): ########### Untested
-    out = channel[piNum].recv(9999)
+def Check(localpath, piNum):
+    if not initialized[piNum]:
+        out = channel[piNum].recv(9999)
+        initialized[piNum] = True
     channel[piNum].send('ls | grep ' + localpath + '\n')
     while not channel[piNum].recv_ready():
         time.sleep(.1)
     out = channel[piNum].recv(9999)
-    if localpath in out.decode("ascii"):
+    results = out.decode("ascii").split('\n')
+    if localpath in results[1]:
         return True
     else:
         return False
 
 # Check if a file is on both Pis
-def CheckBoth(localpath): ########### Untested
-    out0 = channel[0].recv(9999)
+def CheckBoth(localpath):
+    if not initialized[0]:
+        out0 = channel[0].recv(9999)
+        initialized[0] = True
     channel[0].send('ls | grep ' + localpath + '\n')
     while not channel[0].recv_ready():
         time.sleep(.1)
     out0 = channel[0].recv(9999)
+    results0 = out0.decode("ascii").split('\n')
 
-    out1 = channel[1].recv(9999)
+    if not initialized[1]:
+        out1 = channel[1].recv(9999)
+        initialized[1] = True
     channel[1].send('ls | grep ' + localpath + '\n')
     while not channel[1].recv_ready():
         time.sleep(.1)
     out1 = channel[1].recv(9999)
+    results1 = out1.decode("ascii").split('\n')
 
-    if localpath in out0.decode("ascii") and localpath in out1.decode("ascii"):
+    if localpath in results0[1] and localpath in results1[1]:
         return True
     else:
         return False
+
+# Retrieve a file from one Pi
+def Retrieve(remotepath, piNum):
+    if not Check(remotepath, piNum):
+        print(f'Failed to retrieve {remotepath} from Pi{piNum}: File does not exist.')
+        return False
+    localpath = remotepath[:-4] + str(piNum) + remotepath[-4:]
+    try:
+        sftp = ssh[piNum].open_sftp()
+        sftp.get(remotepath, localpath)
+        sftp.close()
+        print(f'{remotepath} retrieved successfully from Pi{piNum}.')
+        return True
+    except:
+        print(f'File retrieval failed from Pi{piNum}.')
+        return False
+
+# Retrieve a file from both Pis
+def RetrieveBoth(remotepath):
+    if not CheckBoth(remotepath):
+        print(f'Failed to retrieve {remotepath}: File does not exist on one or both Pis.')
+        return False
+    localpath0 = remotepath[:-4] + '0' + remotepath[-4:]
+    localpath1 = remotepath[:-4] + '1' + remotepath[-4:]
+    try:
+        sftp0 = ssh[0].open_sftp()
+        sftp0.get(remotepath, localpath0)
+        sftp0.close()
+        print(f'{localpath0} successfully retrieved from Pi0.')
+    except:
+        print(f'File retrieval failed from Pi0.')
+        return False
+    try:
+        sftp1 = ssh[1].open_sftp()
+        sftp1.get(remotepath, localpath1)
+        sftp1.close()
+        print(f'{localpath1} successfully retrieved from Pi1.')
+    except:
+        print(f'File retrieval failed from Pi1.')
+        return False
+    return True
 
 # Send file to one Pi
 def Transfer(localpath, piNum):
