@@ -16,20 +16,12 @@ def connect():
     bot.safe()
 
 
-def undock():
-    bot.drive_direct(-500, -500)
-    time.sleep(1)
-    bot.drive_stop()
-
-
 def scanMap():
+    port = '/dev/ttyUSB1'
     curScan = []
     allScans = {}
     
-    try:
-        Obj = PyLidar3.YdLidarX4('/dev/ttyUSB1', chunk_size=6000)
-    except:
-        Obj = PyLidar3.YdLidarX4('/dev/ttyUSB0', chunk_size=6000)
+    Obj = PyLidar3.YdLidarX4(port, chunk_size=6000)
     if Obj.Connect():
         gen = Obj.StartScanning()
         # Number of scans to be taken
@@ -42,7 +34,6 @@ def scanMap():
                     allScans.update({angle: [curScan[angle]]})
                 else:
                     allScans[angle].append(curScan[angle])
-        
     Obj.Disconnect()
     
     # Process scan data
@@ -51,7 +42,7 @@ def scanMap():
     varScan = {}
     
     # Take mean and standard diviation of scans
-    for angle in scan:
+    for angle in allScans:
         meanScan.update({angle: statistics.mean(allScans.get(angle))})
         varScan.update({angle: statistics.variance(allScans.get(angle))})
         stdevScan.update({angle: statistics.stdev(allScans.get(angle))})
@@ -75,7 +66,7 @@ def scanMap():
     estimatedMap = acceptedScan
     
     # Map lidar scan & save as image (.png)
-    matplotlib.use("TkAgg")
+    #matplotlib.use("TkAgg")
 
     fig = plt.figure(1)
     
@@ -98,8 +89,7 @@ def scanMap():
     axe.set_ylim(-6000, 6000)
     axe.set_xlim(-6000, 6000)
     fig.canvas.draw_idle()
-    plt.show()
-    plt.savefig('.png')
+    plt.savefig('1.png')
 
 
 def move(distance):
@@ -116,14 +106,8 @@ def rotate(angle):
     else:
         angle = -angle
         bot.drive_direct(150, -150)
-    time.sleep(angle/69)
+    time.sleep(angle/72)
     bot.drive_stop()
-
-def dock():
-    bot.seek_dock()
-    sensors = bot.get_sensors()
-    while sensors.charger_state == 0:
-        time.sleep(.5)
 
 
 def disconnect():
@@ -137,11 +121,7 @@ command = ''
 while 'disconnect' not in command:
     prev_com = command
 
-    if 'undock' in command:
-        undock()
-        print('undocked')
-
-    elif 'scan' in command:
+    if 'scan' in command:
         scanMap()
         print('scanned')
 
@@ -154,10 +134,6 @@ while 'disconnect' not in command:
         ang = float(command[7:])
         rotate(ang)
         print('rotated ' + command[7:])
-
-    elif 'dock' in command:
-        dock()
-        print('docked')
 
     command = str(input())
 

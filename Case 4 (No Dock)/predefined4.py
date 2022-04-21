@@ -16,12 +16,6 @@ def connect():
     bot.safe()
 
 
-def undock():
-    bot.drive_direct(-500, -500)
-    time.sleep(1)
-    bot.drive_stop()
-
-
 def scanMap():
     curScan = []
     allScans = {}
@@ -102,28 +96,22 @@ def scanMap():
     plt.savefig('.png')
 
 
-def move(distance):
-    bot.drive_direct(225, 225)
-    time.sleep(distance * 3)
-    bot.drive_stop()
-
-
 def rotate(angle):
     if angle > 0:
-        bot.drive_direct(-150, 150)
+        if angle > 45:
+            bot.drive_direct(-150, 150)
+        else:
+            bot.drive_direct(-165, 165)
     elif angle == 0:
         bot.drive_direct(0, 0)
     else:
         angle = -angle
-        bot.drive_direct(150, -150)
+        if angle > 45:
+            bot.drive_direct(150, -150)
+        else:
+            bot.drive_direct(165, -165)
     time.sleep(angle/69)
     bot.drive_stop()
-
-def dock():
-    bot.seek_dock()
-    sensors = bot.get_sensors()
-    while sensors.charger_state == 0:
-        time.sleep(.5)
 
 
 def disconnect():
@@ -137,27 +125,14 @@ command = ''
 while 'disconnect' not in command:
     prev_com = command
 
-    if 'undock' in command:
-        undock()
-        print('undocked')
-
-    elif 'scan' in command:
-        scanMap()
-        print('scanned')
-
-    elif 'move' in command:
-        dist = float(command[5:])
-        move(dist)
-        print('moved ' + command[5:])
-    
-    elif 'rotate' in command:
+    if 'rotate' in command:
         ang = float(command[7:])
         rotate(ang)
         print('rotated ' + command[7:])
 
-    elif 'dock' in command:
-        dock()
-        print('docked')
+    elif 'scan' in command:
+        scanMap()
+        print('scanned')
 
     command = str(input())
 

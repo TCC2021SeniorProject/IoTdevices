@@ -1,13 +1,6 @@
 import asyncio
 import time
 import piInterface as piI
-import time
-from pycreate2 import Create2
-import PyLidar3
-import matplotlib.pyplot as plt
-import matplotlib
-import math
-import statistics
 
 numLoops = 0
 initalize = None #Channel variable
@@ -48,14 +41,16 @@ class CentralController:
             pi1 = piI.Shell('', 1)
         piI.Disconnect()
 
+        pass
+
     async def Com_finished(self):
         global numLoops
-        if numLoops <= 2:
+        if numLoops < 2:
             numLoops = numLoops +1
             await asyncio.sleep(0.01)
             await asyncio.gather(Pi0.Finishing(), Pi1.Finishing(), )
             await self.Com_initialized()
-        if numLoops > 2:
+        if numLoops == 2:
             await asyncio.sleep(0.01)
             await asyncio.gather(Pi0.Disconnecting(), Pi1.Disconnecting(), )
             await self.Com_disconnect()
@@ -244,6 +239,18 @@ class RaspberryPi0:
         pass
 
     async def Scanning(self):
+        out = piI.Shell('scan\n', self.piNum)
+        print(out, end='')
+        await asyncio.sleep(0.01)
+        while 'scanned' not in out:
+            time.sleep(.1)
+            out = piI.Shell('', self.piNum)
+            print(out, end='')
+        if self.piNum == 0:
+            piI.Retrieve('1.png', 0)
+        else:
+            piI.Retrieve('1.png', 1)
+
         await asyncio.sleep(0.01)
         await self.Scanned()
 
@@ -336,6 +343,18 @@ class RaspberryPi1:
         pass
 
     async def Scanning(self):
+        out = piI.Shell('scan\n', self.piNum)
+        print(out, end='')
+        await asyncio.sleep(0.01)
+        while 'scanned' not in out:
+            time.sleep(.1)
+            out = piI.Shell('', self.piNum)
+            print(out, end='')
+        if self.piNum == 0:
+            piI.Retrieve('1.png', 0)
+        else:
+            piI.Retrieve('1.png', 1)
+
         await asyncio.sleep(0.01)
         await self.Scanned()
 

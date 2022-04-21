@@ -13,29 +13,6 @@ def Com_finished():
     time.sleep(3)
 
 
-def Docking():
-    out = piI.Shell('dock', self.piNum)
-    print(out, end='')
-    await asyncio.sleep(0.01)
-    while 'docked' not in out:
-        time.sleep(.1)
-        out = piI.Shell('', self.piNum)
-        print(out, end='')
-
-
-def Moving():
-    if self.piNum == 0:
-        out = piI.Shell('move ' + str(rp0Distance), self.piNum)
-    else:
-        out = piI.Shell('move ' + str(rp1Distance), self.piNum)
-    print(out, end='')
-    await asyncio.sleep(0.01)
-    while 'moved' not in out:
-        time.sleep(.1)
-        out = piI.Shell('', self.piNum)
-        print(out, end='')
-
-
 def Turning():
     if self.piNum == 0:
         out = piI.Shell('rotate ' + str(rp0Angle), self.piNum)
@@ -44,16 +21,6 @@ def Turning():
     print(out, end='')
     await asyncio.sleep(0.01)
     while 'rotated' not in out:
-        time.sleep(.1)
-        out = piI.Shell('', self.piNum)
-        print(out, end='')
-
-
-def Undock():
-    out = piI.Shell('undock\n', self.piNum)
-    print(out, end='')
-    await asyncio.sleep(0.01)
-    while 'undocked' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out, end='')

@@ -104,7 +104,7 @@ class CentralController:
 
     async def Com_initialized(self):
         piI.Connect()
-        pi0, pi1 = piI.ShellBoth('python3 -i predefined2.py\n')
+        pi0, pi1 = piI.ShellBoth('python3 -i predefined3.py\n')
         print(str(pi0) + str(pi1), end='')
         while 'connected' not in pi0:
             time.sleep(.1)

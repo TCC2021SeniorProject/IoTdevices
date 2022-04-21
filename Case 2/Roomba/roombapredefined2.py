@@ -1,6 +1,6 @@
 import time
 from pycreate2 import Create2
-import PyLidar3
+
 
 def connect():
     global bot
@@ -19,51 +19,27 @@ def undock():
 
 
 def move(distance):
-    if distance > 0:
-        bot.drive_direct(225, 225)
-    elif distance < 0:
-        distance = -distance
-        bot.drive_direct(-255, -255)
-    else:
-        bot.drive_direct(0, 0)
+    bot.drive_direct(225, 225)
     time.sleep(distance * 3)
     bot.drive_stop()
 
 
 def rotate(angle):
     if angle > 0:
-        if angle > 45:
-            bot.drive_direct(-150, 150)
-        else:
-            bot.drive_direct(-165, 165)
+        bot.drive_direct(-150, 150)
     elif angle == 0:
         bot.drive_direct(0, 0)
     else:
         angle = -angle
-        if angle > 45:
-            bot.drive_direct(150, -150)
-        else:
-            bot.drive_direct(165, -165)
+        bot.drive_direct(150, -150)
     time.sleep(angle/69)
     bot.drive_stop()
 
-
 def dock():
     bot.seek_dock()
-    sensors0 = bot.get_sensors()
-    time.sleep(.3)
-    sensors1 = bot.get_sensors()
-    time.sleep(.3)
-    sensors2 = bot.get_sensors()
-    time.sleep(.3)
-    while sensors0.charger_state == 0 and sensors1.charger_state == 0 and sensors2.charger_state == 0:
-        time.sleep(1)
-        sensors0 = bot.get_sensors()
-        time.sleep(.3)
-        sensors1 = bot.get_sensors()
-        time.sleep(.3)
-        sensors2 = bot.get_sensors()
-        time.sleep(.3)
+    sensors = bot.get_sensors()
+    while sensors.charger_state == 0:
+        time.sleep(.5)
 
 
 def disconnect():
