@@ -3,7 +3,7 @@ import piInterface as piI
 
 def Com_initialized():
     piI.Connect()
-    pi0, pi1 = piI.ShellBoth('python3 -i predefinedd1.py\n')
+    pi0, pi1 = piI.ShellBoth('python3 -i predefinedd1_5.py\n')
     print(str(pi0) + str(pi1), end='')
     while 'connected' not in pi0:
         time.sleep(.1)
@@ -13,19 +13,6 @@ def Com_initialized():
         time.sleep(.1)
         pi1 = piI.Shell('', 1)
         print(pi1, end='')
-
-
-def Moving():
-    if self.piNum == 0:
-        out = piI.Shell('move ' + str(rp0Distance), self.piNum)
-    else:
-        out = piI.Shell('move ' + str(rp1Distance), self.piNum)
-    print(out, end='')
-    await asyncio.sleep(0.01)
-    while 'moved' not in out:
-        time.sleep(.1)
-        out = piI.Shell('', self.piNum)
-        print(out, end='')
 
 
 def TurningAsync():
@@ -49,6 +36,19 @@ def Turning():
     print(out, end='')
     await asyncio.sleep(0.01)
     while 'rotated' not in out:
+        time.sleep(.1)
+        out = piI.Shell('', self.piNum)
+        print(out, end='')
+
+
+def Moving():
+    if self.piNum == 0:
+        out = piI.Shell('move ' + str(rp0Distance), self.piNum)
+    else:
+        out = piI.Shell('move ' + str(rp1Distance), self.piNum)
+    print(out, end='')
+    await asyncio.sleep(0.01)
+    while 'moved' not in out:
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out, end='')

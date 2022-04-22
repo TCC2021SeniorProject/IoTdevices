@@ -1,8 +1,8 @@
 def Scanning():
     if self.piNum == 0:
-        com = 'scan 0 ' + str(mapRp0) + '\n'
+        com = 'scan ' + str(mapRp0) + ' ' + str(rp0ScanNum) + '\n'
     else:
-        com = 'scan 1 ' + str(mapRp1) + '\n'
+        com = 'scan ' + str(mapRp1) + ' ' + str(rp1ScanNum) + '\n'
     out = piI.Shell(com, self.piNum)
     print(out, end='')
     await asyncio.sleep(0.01)
@@ -10,9 +10,11 @@ def Scanning():
         time.sleep(.1)
         out = piI.Shell('', self.piNum)
         print(out, end='')
-    file = com[5:]
+    time.sleep(1)
     if self.piNum == 0:
-        piI.Retrieve(file, 0)
+        file0 = 'pi0_' + str(mapRp0) + '.png'
+        piI.Retrieve(file0, 0)
     else:
-        piI.Retrieve(file, 1)
+        file1 = 'pi1_' + str(mapRp1) + '.png'
+        piI.Retrieve(file1, 1)
     await asyncio.sleep(0.01)

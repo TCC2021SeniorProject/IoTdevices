@@ -33,44 +33,44 @@ int mapRp0, mapRp1;
 	<template>
 		<name x="5" y="5">CentralController</name>
 		<declaration>// Local declarations</declaration>
-		<location id="id0" x="-1844" y="-1547">
-			<name x="-1854" y="-1581">Com_initialized</name>
+		<location id="id0" x="-1844" y="-1521">
+			<name x="-1854" y="-1555">Com_initialized</name>
 		</location>
 		<location id="id1" x="-1844" y="-1411">
 			<name x="-1946" y="-1402">Com_finished</name>
 		</location>
-		<location id="id2" x="-1717" y="-1649">
-			<name x="-1727" y="-1683">Com_turn1</name>
+		<location id="id2" x="-1717" y="-1623">
+			<name x="-1727" y="-1657">Com_turn1</name>
 		</location>
-		<location id="id3" x="-1139" y="-1700">
-			<name x="-1149" y="-1734">Com_turn2</name>
+		<location id="id3" x="-1326" y="-1623">
+			<name x="-1336" y="-1657">Com_turn2</name>
 		</location>
-		<location id="id4" x="-1369" y="-1564">
-			<name x="-1445" y="-1592">Com_turn3</name>
+		<location id="id4" x="-1156" y="-1504">
+			<name x="-1147" y="-1529">Com_turn3</name>
 		</location>
-		<location id="id5" x="-1165" y="-1147">
-			<name x="-1148" y="-1156">Com_turn4</name>
+		<location id="id5" x="-1351" y="-1181">
+			<name x="-1436" y="-1207">Com_turn4</name>
 		</location>
-		<location id="id6" x="-1581" y="-1411">
-			<name x="-1650" y="-1445">Com_turn5</name>
+		<location id="id6" x="-1640" y="-1411">
+			<name x="-1709" y="-1445">Com_turn5</name>
 		</location>
-		<location id="id7" x="-1504" y="-1700">
-			<name x="-1514" y="-1734">Com_move1</name>
+		<location id="id7" x="-1521" y="-1623">
+			<name x="-1531" y="-1657">Com_move1</name>
 		</location>
-		<location id="id8" x="-1139" y="-1564">
-			<name x="-1131" y="-1590">Com_move2</name>
+		<location id="id8" x="-1156" y="-1623">
+			<name x="-1148" y="-1649">Com_move2</name>
 		</location>
-		<location id="id9" x="-1165" y="-1283">
-			<name x="-1157" y="-1309">Com_move3</name>
+		<location id="id9" x="-1156" y="-1258">
+			<name x="-1148" y="-1284">Com_move3</name>
 		</location>
-		<location id="id10" x="-1369" y="-1147">
-			<name x="-1454" y="-1172">Com_move4</name>
+		<location id="id10" x="-1351" y="-1300">
+			<name x="-1445" y="-1325">Com_move4</name>
 		</location>
-		<location id="id11" x="-1369" y="-1445">
-			<name x="-1453" y="-1470">Com_scan1</name>
+		<location id="id11" x="-1156" y="-1411">
+			<name x="-1240" y="-1436">Com_scan1</name>
 		</location>
-		<location id="id12" x="-1369" y="-1266">
-			<name x="-1454" y="-1292">Com_scan2</name>
+		<location id="id12" x="-1351" y="-1411">
+			<name x="-1436" y="-1437">Com_scan2</name>
 		</location>
 		<location id="id13" x="-2031" y="-1479">
 			<name x="-2041" y="-1513">Com_disconnect</name>
@@ -79,22 +79,20 @@ int mapRp0, mapRp1;
 		<transition>
 			<source ref="id12"/>
 			<target ref="id6"/>
-			<label kind="synchronisation" x="-1538" y="-1428">scan!</label>
-			<label kind="assignment" x="-1538" y="-1411">rp0ScanNum = 25,
-rp1ScanNum = 25,
+			<label kind="synchronisation" x="-1598" y="-1428">scan!</label>
+			<label kind="assignment" x="-1598" y="-1411">rp0ScanNum = 10,
+rp1ScanNum = 10,
 mapRp0 = numLoops + 2,
 mapRp1 = numLoops + 2</label>
-			<nail x="-1368" y="-1411"/>
 		</transition>
 		<transition>
 			<source ref="id11"/>
 			<target ref="id9"/>
-			<label kind="synchronisation" x="-1326" y="-1462">scan!</label>
-			<label kind="assignment" x="-1334" y="-1445">rp0ScanNum = 25,
-rp1ScanNum = 25,
+			<label kind="synchronisation" x="-1147" y="-1394">scan!</label>
+			<label kind="assignment" x="-1147" y="-1377">rp0ScanNum = 10,
+rp1ScanNum = 10,
 mapRp0 = numLoops + 1,
 mapRp1 = numLoops + 1</label>
-			<nail x="-1164" y="-1445"/>
 		</transition>
 		<transition>
 			<source ref="id6"/>
@@ -106,16 +104,16 @@ rp1Angle = 90.0</label>
 		<transition>
 			<source ref="id1"/>
 			<target ref="id0"/>
-			<label kind="guard" x="-1844" y="-1487">numLoops &lt; 2</label>
-			<label kind="synchronisation" x="-1844" y="-1504">finish!</label>
-			<label kind="assignment" x="-1844" y="-1470">numLoops = numLoops + 1</label>
+			<label kind="guard" x="-1836" y="-1487">numLoops &lt; 2</label>
+			<label kind="synchronisation" x="-1836" y="-1504">finish!</label>
+			<label kind="assignment" x="-1836" y="-1470">numLoops = numLoops + 1</label>
 		</transition>
 		<transition>
 			<source ref="id0"/>
 			<target ref="id2"/>
-			<label kind="synchronisation" x="-1819" y="-1564">initalize!</label>
-			<nail x="-1751" y="-1547"/>
-			<nail x="-1751" y="-1649"/>
+			<label kind="synchronisation" x="-1819" y="-1538">initalize!</label>
+			<nail x="-1751" y="-1521"/>
+			<nail x="-1751" y="-1623"/>
 		</transition>
 		<transition>
 			<source ref="id1"/>
@@ -127,60 +125,60 @@ rp1Angle = 90.0</label>
 		<transition>
 			<source ref="id10"/>
 			<target ref="id12"/>
-			<label kind="synchronisation" x="-1360" y="-1241">move!</label>
-			<label kind="assignment" x="-1360" y="-1225">rp0Distance = 0.5,
+			<label kind="synchronisation" x="-1343" y="-1393">move!</label>
+			<label kind="assignment" x="-1343" y="-1377">rp0Distance = 0.5,
 rp1Distance = 0.5</label>
 		</transition>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id11"/>
-			<label kind="synchronisation" x="-1411" y="-1555">turn!</label>
-			<label kind="assignment" x="-1479" y="-1538">rp0Angle = 90.0,
+			<label kind="synchronisation" x="-1147" y="-1487">turn!</label>
+			<label kind="assignment" x="-1147" y="-1470">rp0Angle = 90.0,
 rp1Angle = -90.0</label>
 		</transition>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id10"/>
-			<label kind="synchronisation" x="-1343" y="-1164">turn!</label>
-			<label kind="assignment" x="-1343" y="-1147">rp0Angle = 90.0,
+			<label kind="synchronisation" x="-1385" y="-1266">turn!</label>
+			<label kind="assignment" x="-1462" y="-1249">rp0Angle = 90.0,
 rp1Angle = -90.0</label>
 		</transition>
 		<transition>
 			<source ref="id9"/>
 			<target ref="id5"/>
-			<label kind="synchronisation" x="-1156" y="-1249">move!</label>
-			<label kind="assignment" x="-1155" y="-1232">rp0Distance = 0.5,
+			<label kind="synchronisation" x="-1284" y="-1198">move!</label>
+			<label kind="assignment" x="-1283" y="-1181">rp0Distance = 0.5,
 rp1Distance = 0.5</label>
+			<nail x="-1156" y="-1181"/>
 		</transition>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id4"/>
-			<label kind="synchronisation" x="-1334" y="-1581">move!</label>
-			<label kind="assignment" x="-1334" y="-1564">rp0Distance = 0.5,
+			<label kind="synchronisation" x="-1147" y="-1606">move!</label>
+			<label kind="assignment" x="-1147" y="-1589">rp0Distance = 0.5,
 rp1Distance = 0.5</label>
 		</transition>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id8"/>
-			<label kind="synchronisation" x="-1130" y="-1666">turn!</label>
-			<label kind="assignment" x="-1130" y="-1649">rp0Angle = 90.0,
+			<label kind="synchronisation" x="-1309" y="-1640">turn!</label>
+			<label kind="assignment" x="-1309" y="-1623">rp0Angle = 90.0,
 rp1Angle = -90.0</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
 			<target ref="id3"/>
-			<label kind="synchronisation" x="-1461" y="-1717">move!</label>
-			<label kind="assignment" x="-1462" y="-1700">rp0Distance = 0.5,
+			<label kind="synchronisation" x="-1478" y="-1640">move!</label>
+			<label kind="assignment" x="-1479" y="-1623">rp0Distance = 0.5,
 rp1Distance = 0.5</label>
-			<nail x="-1410" y="-1700"/>
+			<nail x="-1427" y="-1623"/>
 		</transition>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id7"/>
-			<label kind="synchronisation" x="-1665" y="-1666">turn!</label>
-			<label kind="assignment" x="-1666" y="-1649">rp0Angle = 180.0,
+			<label kind="synchronisation" x="-1665" y="-1640">turn!</label>
+			<label kind="assignment" x="-1666" y="-1623">rp0Angle = 180.0,
 rp1Angle = -180.0</label>
-			<nail x="-1504" y="-1649"/>
 		</transition>
 	</template>
 	<template>

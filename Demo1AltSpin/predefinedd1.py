@@ -12,6 +12,12 @@ def connect():
     bot.safe()
 
 
+def move(distance):
+    bot.drive_direct(225, 225)
+    time.sleep(distance * 3)
+    bot.drive_stop()
+
+
 def rotate(angle):
     if angle > 0:
         bot.drive_direct(-165, 165)
@@ -35,7 +41,12 @@ command = ''
 while 'disconnect' not in command:
     prev_com = command
 
-    if 'rotate' in command:
+    if 'move' in command:
+        dist = float(command[5:])
+        move(dist)
+        print('moved ' + command[5:])
+
+    elif 'rotate' in command:
         ang = float(command[7:])
         rotate(ang)
         print('rotated ' + command[7:])

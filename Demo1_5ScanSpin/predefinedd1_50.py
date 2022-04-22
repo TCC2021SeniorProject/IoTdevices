@@ -98,7 +98,7 @@ def scanMap(mapRp0, rp0ScanNum):
     plt.style.use('seaborn-darkgrid')
     fig = plt.figure()
     
-    fig.canvas.manager.set_window_title("Lidar Map | pi0 - " + mapRp0)
+    fig.canvas.manager.set_window_title("Lidar Map | pi0 - " + str(mapRp0))
     
     x = [0 for _ in range(360)]
     y = [0 for _ in range(360)]
@@ -112,7 +112,7 @@ def scanMap(mapRp0, rp0ScanNum):
     plt.plot(0,0, marker='o', markersize=7, markerfacecolor='grey', mew=1.0, markeredgecolor='black')
     fig.canvas.draw()
 
-    plt.savefig('pi0' + '_' + mapRp0 + '.png')
+    plt.savefig('pi0' + '_' + str(mapRp0) + '.png')
 
 
 def rotate(angle):
@@ -123,7 +123,7 @@ def rotate(angle):
     else:
         angle = -angle
         bot.drive_direct(150, -150)
-    time.sleep(angle/69)
+    time.sleep(angle/67)
     bot.drive_stop()
 
 
@@ -150,6 +150,8 @@ while 'disconnect' not in command:
 
     elif 'scan' in command:
         mapRp0, rp0ScanNum = command[5:].split(' ')
+        mapRp0 = int(mapRp0)
+        rp0ScanNum = int(rp0ScanNum)
         scanMap(mapRp0, rp0ScanNum)
         print('scanned ' + command[5:])
 
