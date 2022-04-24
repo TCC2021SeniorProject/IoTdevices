@@ -44,10 +44,6 @@
   <li><a href="#about-the-project">About the Project</a></li>
   <li><a href="#getting-started">Getting Started</a></li>
   <li><a href="#current-features">Current Features</a></li>
-  <li><a href="#usage">Usage/Application</a></li>
-  <li><a href="#roadmap">Roadmap</a></li>
-  <li><a href="#coding-style-convention">Coding Style Convention</a></li>
-  <li><a href="#license">License</a></li>
   <li><a href="#contact">Contact</a></li>
 </ol>
 
@@ -76,7 +72,7 @@ Here are the people who want to use this:
 ### Prerequisites
 
 Using pip3:
-Download pycreate2
+Download pycreate2, 
 Download paramiko
 
 
