@@ -124,7 +124,7 @@ def Check(localpath, deviceNum):
         return False
 
 # Check if a file is on all devices
-def CheckBoth(localpath):
+def CheckAll(localpath):
     localpath = str(localpath)
     allResults = []
     onAllDevices = True
