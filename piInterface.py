@@ -1,4 +1,5 @@
 '''This script establishes ssh connections from the control device to the Pis on the Roombas. Written by Cael Shoop.'''
+# With some modifications it could be used with different devices that accept ssh connections as well.
 
 import paramiko
 import time

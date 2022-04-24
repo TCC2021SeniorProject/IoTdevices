@@ -117,7 +117,7 @@ def rotate(angle):
     else:
         angle = -angle
         bot.drive_direct(150, -150)
-    time.sleep(angle/67)
+    time.sleep(angle/73.5)
     bot.drive_stop()
 
 
